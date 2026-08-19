@@ -52,7 +52,7 @@ export function CustomersContent() {
         .insert({ ...data, user_id: userId })
         .select()
         .single();
-      if (error) { toast.error(error.message || "Failed to add customer"); return; }
+      if (error) { toast.error(error.message || error.details || error.code || "Failed to add customer"); return; }
       setCustomers((prev) => [...prev, created]);
       toast.success("Customer added");
     }
