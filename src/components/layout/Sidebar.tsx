@@ -86,6 +86,56 @@ export function Sidebar() {
         })}
       </nav>
 
+      {/* Plywood animation */}
+      <div style={{ padding: "4px 14px 14px", overflow: "hidden" }}>
+        <style>{`
+          @keyframes plySway {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-4px); }
+          }
+          .ply-sheet-1 { animation: plySway 4s ease-in-out infinite; }
+          .ply-sheet-2 { animation: plySway 4s ease-in-out infinite; animation-delay: -1.33s; }
+          .ply-sheet-3 { animation: plySway 4s ease-in-out infinite; animation-delay: -2.66s; }
+        `}</style>
+        <svg
+          width="100%"
+          viewBox="0 0 176 76"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          style={{ display: "block", opacity: 0.85 }}
+        >
+          {/* Shadow under stack */}
+          <ellipse cx="88" cy="73" rx="68" ry="3.5" fill="#D1B48C" opacity="0.3" />
+
+          {/* Bottom sheet — darkest */}
+          <g className="ply-sheet-3" style={{ willChange: "transform" }}>
+            <rect x="4" y="52" width="168" height="17" rx="3" fill="#B07848" />
+            <path d="M10 55.5 Q50 56.8 88 55.5 Q126 54.2 166 55.5" stroke="#8A5C32" strokeWidth="0.7" strokeOpacity="0.45" fill="none" />
+            <path d="M10 59   Q50 60.3 88 59.2 Q126 58   166 59.2" stroke="#8A5C32" strokeWidth="0.55" strokeOpacity="0.35" fill="none" />
+            <path d="M10 62.5 Q50 63.5 88 62.8 Q126 61.8 166 62.8" stroke="#8A5C32" strokeWidth="0.45" strokeOpacity="0.28" fill="none" />
+          </g>
+
+          {/* Middle sheet */}
+          <g className="ply-sheet-2" style={{ willChange: "transform" }}>
+            <rect x="10" y="35" width="156" height="17" rx="3" fill="#C8945A" />
+            <path d="M16 38.5 Q54 39.8 88 38.5 Q122 37.2 160 38.5" stroke="#9B7040" strokeWidth="0.7" strokeOpacity="0.45" fill="none" />
+            <path d="M16 42   Q54 43.3 88 42.2 Q122 41   160 42.2" stroke="#9B7040" strokeWidth="0.55" strokeOpacity="0.35" fill="none" />
+            <path d="M16 45.5 Q54 46.5 88 45.8 Q122 44.8 160 45.8" stroke="#9B7040" strokeWidth="0.45" strokeOpacity="0.28" fill="none" />
+          </g>
+
+          {/* Top sheet — lightest */}
+          <g className="ply-sheet-1" style={{ willChange: "transform" }}>
+            <rect x="16" y="18" width="144" height="17" rx="3" fill="#DEB078" />
+            {/* Edge highlight */}
+            <rect x="16" y="18" width="144" height="2" rx="2" fill="#ECC890" opacity="0.7" />
+            <path d="M22 22   Q58 23.3 88 22 Q118 20.8 154 22"   stroke="#B08848" strokeWidth="0.7" strokeOpacity="0.45" fill="none" />
+            <path d="M22 25.5 Q58 26.8 88 25.5 Q118 24.3 154 25.5" stroke="#B08848" strokeWidth="0.55" strokeOpacity="0.35" fill="none" />
+            <path d="M22 29   Q58 30   88 29.2 Q118 28.2 154 29.2" stroke="#B08848" strokeWidth="0.45" strokeOpacity="0.28" fill="none" />
+          </g>
+        </svg>
+      </div>
+
       {/* Logout */}
       <div className="px-3 pb-5" style={{ borderTop: "1px solid #E5E7EB" }}>
         <button
