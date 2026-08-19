@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Customer, Quotation, Invoice } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { QuotationStatusBadge, PaymentStatusBadge } from "@/components/ui/badge";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { Phone, Mail, MapPin, FileText, Receipt, ArrowLeft } from "lucide-react";
+import { Phone, Mail, MapPin, FileText, Receipt, ArrowLeft, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 
 interface Props {
   customer: Customer;
@@ -16,17 +19,45 @@ interface Props {
 }
 
 export function CustomerProfileContent({ customer, quotations, invoices }: Props) {
+  const router = useRouter();
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
   const totalBilling = invoices.reduce((s, i) => s + Number(i.grand_total), 0);
   const amountPaid = invoices.reduce((s, i) => s + Number(i.amount_paid), 0);
   const pendingAmount = invoices.reduce((s, i) => s + Number(i.balance_due), 0);
 
+  async function handleDelete() {
+    setDeleting(true);
+    const supabase = createClient();
+    await supabase.from("customers").delete().eq("id", customer.id);
+    router.push("/customers");
+    router.refresh();
+  }
+
   return (
     <div className="px-4 lg:px-8 py-6 max-w-5xl mx-auto w-full space-y-6">
-      <Link href="/customers">
-        <Button variant="ghost" size="sm">
-          <ArrowLeft className="h-4 w-4" /> Back to Customers
-        </Button>
-      </Link>
+      <div className="flex items-center justify-between">
+        <Link href="/customers">
+          <Button variant="ghost" size="sm">
+            <ArrowLeft className="h-4 w-4" /> Back to Customers
+          </Button>
+        </Link>
+
+        {deleteConfirm ? (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-red-600">Delete this customer?</span>
+            <Button variant="danger" size="sm" onClick={handleDelete} disabled={deleting}>
+              {deleting ? "Deleting…" : "Yes, delete"}
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setDeleteConfirm(false)}>Cancel</Button>
+          </div>
+        ) : (
+          <Button variant="danger-outline" size="sm" onClick={() => setDeleteConfirm(true)}>
+            <Trash2 className="h-3.5 w-3.5" /> Delete Customer
+          </Button>
+        )}
+      </div>
 
       {/* Customer Info */}
       <Card>
