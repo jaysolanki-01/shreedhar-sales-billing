@@ -1,27 +1,29 @@
 "use client";
 
 import { Menu } from "lucide-react";
+import { useMobileMenu } from "@/lib/mobile-menu-context";
 
 interface HeaderProps {
   title: string;
   subtitle?: string;
   actions?: React.ReactNode;
-  onMenuClick?: () => void;
+  onMenuClick?: () => void; // kept for backward compat, context takes priority
 }
 
 export function Header({ title, subtitle, actions, onMenuClick }: HeaderProps) {
+  const { openMenu } = useMobileMenu();
+
   return (
     <header
-      className="px-5 lg:px-7 h-14 flex items-center justify-between gap-4 sticky top-0 z-10 bg-white"
+      className="px-4 lg:px-7 h-14 flex items-center justify-between gap-4 sticky top-0 z-10 bg-white"
       style={{ borderBottom: "1px solid #E0E7FF" }}
     >
       <div className="flex items-center gap-3 min-w-0">
         <button
-          onClick={onMenuClick}
-          className="lg:hidden p-1.5 -ml-1 rounded-lg transition-colors flex-shrink-0"
+          onClick={onMenuClick ?? openMenu}
+          className="lg:hidden p-2 -ml-1.5 rounded-lg transition-colors flex-shrink-0 active:bg-indigo-50"
           style={{ color: "#9CA3AF" }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#EEF2FF"; (e.currentTarget as HTMLElement).style.color = "#4F46E5"; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#9CA3AF"; }}
+          aria-label="Open menu"
         >
           <Menu className="h-5 w-5" />
         </button>

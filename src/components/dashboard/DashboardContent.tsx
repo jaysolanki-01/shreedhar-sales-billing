@@ -174,7 +174,7 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
       </div>
 
       {/* Quick Actions */}
-      <div className="flex gap-3">
+      <div className="flex gap-3 flex-wrap">
         <Link href="/quotations/new">
           <Button variant="primary" size="md">
             <Plus className="h-4 w-4" />
@@ -191,14 +191,14 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
 
       {/* Period filter */}
       <div className="bg-surface rounded-xl border border-brand-border shadow-card overflow-hidden">
-        <div className="px-6 py-4 border-b border-brand-border flex items-center justify-between gap-4 flex-wrap">
-          <h3 className="font-semibold text-brand-dark">Invoice Activity</h3>
-          <div className="flex gap-1 bg-brand-beige rounded-lg p-1">
+        <div className="px-4 lg:px-6 py-3 border-b border-brand-border flex items-center justify-between gap-3">
+          <h3 className="font-semibold text-brand-dark text-sm lg:text-base flex-shrink-0">Invoice Activity</h3>
+          <div className="flex gap-1 bg-brand-beige rounded-lg p-1 overflow-x-auto max-w-full" style={{ scrollbarWidth: "none" }}>
             {PERIODS.map((p) => (
               <button
                 key={p.value}
                 onClick={() => setPeriod(p.value)}
-                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                className={`px-2.5 lg:px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
                   period === p.value
                     ? "bg-brand-dark text-brand-gold shadow-sm"
                     : "text-brand-muted hover:text-brand-dark"
@@ -254,22 +254,22 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
             </div>
           ) : (
             (selectedWeek ? weekInvoices : invoices).slice(0, 8).map((inv) => (
-              <Link key={inv.id} href={`/invoices/${inv.id}`} className="flex items-center justify-between px-6 py-3.5 hover:bg-brand-beige transition-colors group">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-brand-beige-dark flex items-center justify-center flex-shrink-0">
-                    <Receipt className="h-3.5 w-3.5 text-brand-muted" />
+              <Link key={inv.id} href={`/invoices/${inv.id}`} className="flex items-center justify-between px-4 lg:px-6 py-3 hover:bg-brand-beige transition-colors group">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-7 h-7 rounded-full bg-brand-beige-dark flex items-center justify-center flex-shrink-0">
+                    <Receipt className="h-3 w-3 text-brand-muted" />
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-brand-dark">{inv.invoice_number}</p>
-                    <p className="text-xs text-brand-muted">{(inv.customers as any)?.name ?? ""} · {formatDate(inv.date)}</p>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-brand-dark truncate">{inv.invoice_number}</p>
+                    <p className="text-xs text-brand-muted truncate">{(inv.customers as any)?.name ?? ""} · {formatDate(inv.date)}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 flex-shrink-0 ml-2">
                   <div className="text-right">
                     <p className="text-sm font-semibold text-brand-dark">{formatCurrency(Number(inv.grand_total))}</p>
                     <PaymentStatusBadge status={inv.payment_status} />
                   </div>
-                  <ChevronRight className="h-4 w-4 text-brand-muted opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <ChevronRight className="h-4 w-4 text-brand-muted opacity-0 group-hover:opacity-100 transition-opacity hidden lg:block" />
                 </div>
               </Link>
             ))
