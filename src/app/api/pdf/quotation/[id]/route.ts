@@ -6,14 +6,15 @@ import React from "react";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const [{ data: quotation }, { data: company }, { data: docSettings }] = await Promise.all([
-    supabase.from("quotations").select("*, customers(*), quotation_items(*)").eq("id", params.id).eq("user_id", user.id).single(),
+    supabase.from("quotations").select("*, customers(*), quotation_items(*)").eq("id", id).eq("user_id", user.id).single(),
     supabase.from("company_settings").select("*").eq("user_id", user.id).single(),
     supabase.from("doc_settings").select("*").eq("user_id", user.id).single(),
   ]);
@@ -28,10 +29,14 @@ export async function GET(
     React.createElement(QuotationPDF, { quotation: quotation as any, company, docSettings }) as any
   );
 
+  const disposition = new URL(request.url).searchParams.get("dl") === "1"
+    ? `attachment; filename="${quotation.quotation_number}.pdf"`
+    : `inline; filename="${quotation.quotation_number}.pdf"`;
+
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${quotation.quotation_number}.pdf"`,
+      "Content-Disposition": disposition,
     },
   });
 }

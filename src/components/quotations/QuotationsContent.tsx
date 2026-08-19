@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Search, FileText, ChevronRight, Plus } from "lucide-react";
+import { Search, FileText, ChevronRight, Download } from "lucide-react";
 import { Quotation, QuotationStatus } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { QuotationStatusBadge } from "@/components/ui/badge";
@@ -81,25 +81,27 @@ export function QuotationsContent({ quotations }: { quotations: Quotation[] }) {
           </div>
           <div className="divide-y divide-brand-border">
             {filtered.map((q) => (
-              <Link
-                key={q.id}
-                href={`/quotations/${q.id}`}
-                className="flex items-center lg:grid lg:grid-cols-[2fr_2fr_1fr_1.5fr_1fr_auto] gap-4 px-5 py-3.5 hover:bg-brand-beige transition-colors group"
-              >
-                <div className="flex items-center gap-3 min-w-0">
+              <div key={q.id} className="flex items-center lg:grid lg:grid-cols-[2fr_2fr_1fr_1.5fr_1fr_auto] gap-4 px-5 py-3.5 hover:bg-brand-beige transition-colors group">
+                <Link href={`/quotations/${q.id}`} className="flex items-center gap-3 min-w-0">
                   <div className="w-8 h-8 rounded-lg bg-brand-beige-dark flex items-center justify-center flex-shrink-0">
                     <FileText className="h-3.5 w-3.5 text-brand-muted" />
                   </div>
                   <span className="text-sm font-semibold text-brand-dark">{q.quotation_number}</span>
-                </div>
-                <span className="text-sm text-brand-dark truncate hidden lg:block">
+                </Link>
+                <Link href={`/quotations/${q.id}`} className="text-sm text-brand-dark truncate hidden lg:block">
                   {(q.customers as any)?.name ?? "—"}
-                </span>
-                <span className="text-sm text-brand-muted hidden lg:block">{formatDate(q.date)}</span>
-                <span className="text-sm font-semibold text-brand-dark ml-auto lg:ml-0">{formatCurrency(Number(q.grand_total))}</span>
+                </Link>
+                <Link href={`/quotations/${q.id}`} className="text-sm text-brand-muted hidden lg:block">{formatDate(q.date)}</Link>
+                <Link href={`/quotations/${q.id}`} className="text-sm font-semibold text-brand-dark ml-auto lg:ml-0">{formatCurrency(Number(q.grand_total))}</Link>
                 <div className="hidden lg:block"><QuotationStatusBadge status={q.status} /></div>
-                <ChevronRight className="h-4 w-4 text-brand-muted opacity-0 group-hover:opacity-100 transition-opacity hidden lg:block" />
-              </Link>
+                <button
+                  title="View / Download PDF"
+                  onClick={() => window.open(`/api/pdf/quotation/${q.id}`, "_blank")}
+                  className="hidden lg:flex h-8 w-8 items-center justify-center rounded-lg text-brand-muted hover:text-[#4F46E5] hover:bg-[#EEF2FF] transition-colors"
+                >
+                  <Download className="h-4 w-4" />
+                </button>
+              </div>
             ))}
           </div>
         </div>

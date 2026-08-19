@@ -24,6 +24,7 @@ interface Props {
 export function QuotationDetailContent({ quotation: initial, company, docSettings, userId }: Props) {
   const [quotation, setQuotation] = useState(initial);
   const [converting, setConverting] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
   const router = useRouter();
 
   async function updateStatus(status: QuotationStatus) {
@@ -115,9 +116,14 @@ export function QuotationDetailContent({ quotation: initial, company, docSetting
           <Button
             variant="outline"
             size="md"
-            onClick={() => window.open(`/api/pdf/quotation/${quotation.id}`, "_blank")}
+            loading={pdfLoading}
+            onClick={async () => {
+              setPdfLoading(true);
+              window.open(`/api/pdf/quotation/${quotation.id}`, "_blank");
+              setTimeout(() => setPdfLoading(false), 4000);
+            }}
           >
-            <Download className="h-4 w-4" />PDF
+            <Download className="h-4 w-4" />{pdfLoading ? "Generating…" : "PDF"}
           </Button>
 
           <Button

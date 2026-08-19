@@ -3,7 +3,8 @@ import { redirect, notFound } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { QuotationDetailContent } from "@/components/quotations/QuotationDetailContent";
 
-export default async function QuotationDetailPage({ params }: { params: { id: string } }) {
+export default async function QuotationDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -12,7 +13,7 @@ export default async function QuotationDetailPage({ params }: { params: { id: st
     supabase
       .from("quotations")
       .select("*, customers(*), quotation_items(*)")
-      .eq("id", params.id)
+      .eq("id", id)
       .eq("user_id", user.id)
       .single(),
     supabase.from("company_settings").select("*").eq("user_id", user.id).single(),

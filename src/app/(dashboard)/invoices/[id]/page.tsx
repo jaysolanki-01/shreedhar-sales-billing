@@ -3,16 +3,17 @@ import { redirect, notFound } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { InvoiceDetailContent } from "@/components/invoices/InvoiceDetailContent";
 
-export default async function InvoiceDetailPage({ params }: { params: { id: string } }) {
+export default async function InvoiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
   const [{ data: invoice }, { data: company }, { data: docSettings }, { data: payments }] = await Promise.all([
-    supabase.from("invoices").select("*, customers(*), invoice_items(*)").eq("id", params.id).eq("user_id", user.id).single(),
+    supabase.from("invoices").select("*, customers(*), invoice_items(*)").eq("id", id).eq("user_id", user.id).single(),
     supabase.from("company_settings").select("*").eq("user_id", user.id).single(),
     supabase.from("doc_settings").select("*").eq("user_id", user.id).single(),
-    supabase.from("payments").select("*").eq("invoice_id", params.id).order("payment_date", { ascending: false }),
+    supabase.from("payments").select("*").eq("invoice_id", id).order("payment_date", { ascending: false }),
   ]);
 
   if (!invoice) notFound();
