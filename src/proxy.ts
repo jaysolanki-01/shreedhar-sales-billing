@@ -7,8 +7,10 @@ export async function proxy(request: NextRequest) {
   // These paths are always public
   const isPublic =
     pathname.startsWith("/login") ||
+    pathname.startsWith("/request-access") ||
     pathname.startsWith("/auth") ||
-    pathname.startsWith("/api/pdf");
+    pathname.startsWith("/api/pdf") ||
+    pathname.startsWith("/api/access-requests");
 
   let supabaseResponse = NextResponse.next({ request });
 
