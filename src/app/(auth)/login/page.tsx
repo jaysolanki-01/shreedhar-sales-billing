@@ -28,11 +28,16 @@ export default function LoginPage() {
         router.refresh();
       }
     } else {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) {
         toast.error(error.message);
+      } else if (data.session) {
+        // Email confirmation is disabled — logged in immediately
+        router.push("/");
+        router.refresh();
       } else {
-        toast.success("Account created! You can now sign in.");
+        // Email confirmation required
+        toast.success("Check your email and click the confirmation link, then sign in.");
         setMode("login");
       }
     }
