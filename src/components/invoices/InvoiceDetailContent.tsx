@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { amountToWords } from "@/lib/number-to-words";
-import { ArrowLeft, Download, Edit2, Plus, CreditCard, CheckCircle2, MessageCircle } from "lucide-react";
+import { ArrowLeft, Download, Edit2, Plus, CreditCard, CheckCircle2, MessageCircle, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -34,6 +34,8 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
   const [payRef, setPayRef] = useState("");
   const [payNotes, setPayNotes] = useState("");
   const [paying, setPaying] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const router = useRouter();
   const customer = invoice.customers as any;
 
@@ -48,6 +50,23 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
     const pdfLink = `${window.location.origin}/api/pdf/invoice/${invoice.id}`;
     const text = `Hi ${customer?.name ?? ""},\n\nPlease find your invoice *${invoice.invoice_number}* for *${formatCurrency(Number(invoice.grand_total))}* from ${company?.company_name ?? "Shreedhar Sales"}.${balanceLine}\n\n📄 Download PDF: ${pdfLink}\n\nThank you!`;
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(text)}`, "_blank");
+  }
+
+  async function deleteInvoice() {
+    setDeleting(true);
+    const supabase = createClient();
+    try {
+      await supabase.from("payments").delete().eq("invoice_id", invoice.id);
+      await supabase.from("invoice_items").delete().eq("invoice_id", invoice.id);
+      const { error } = await supabase.from("invoices").delete().eq("id", invoice.id);
+      if (error) throw error;
+      toast.success("Invoice deleted");
+      router.push("/invoices");
+    } catch (err: any) {
+      toast.error(err.message ?? "Failed to delete");
+      setDeleting(false);
+      setDeleteConfirm(false);
+    }
   }
 
   async function recordPayment() {
@@ -102,6 +121,19 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
           <Link href={`/invoices/${invoice.id}/edit`}>
             <Button variant="outline" size="md"><Edit2 className="h-4 w-4" />Edit</Button>
           </Link>
+
+          {deleteConfirm ? (
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-red-600 font-medium">Delete?</span>
+              <Button size="sm" variant="outline" onClick={() => setDeleteConfirm(false)} className="text-xs">Cancel</Button>
+              <Button size="sm" variant="outline" loading={deleting} onClick={deleteInvoice} className="border-red-300 text-red-600 hover:bg-red-50 text-xs">Yes, Delete</Button>
+            </div>
+          ) : (
+            <Button variant="outline" size="md" onClick={() => setDeleteConfirm(true)} className="border-red-200 text-red-500 hover:bg-red-50">
+              <Trash2 className="h-4 w-4" />Delete
+            </Button>
+          )}
+
           {customer?.phone && (
             <Button
               variant="outline"

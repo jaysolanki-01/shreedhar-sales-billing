@@ -11,7 +11,7 @@ import { Select, SelectItem } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Download, Printer, Edit2, RefreshCw, FileCheck, MessageCircle } from "lucide-react";
+import { ArrowLeft, Download, Printer, Edit2, RefreshCw, FileCheck, MessageCircle, Trash2 } from "lucide-react";
 import { amountToWords } from "@/lib/number-to-words";
 
 interface Props {
@@ -25,6 +25,8 @@ export function QuotationDetailContent({ quotation: initial, company, docSetting
   const [quotation, setQuotation] = useState(initial);
   const [converting, setConverting] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const router = useRouter();
 
   async function updateStatus(status: QuotationStatus) {
@@ -90,6 +92,22 @@ export function QuotationDetailContent({ quotation: initial, company, docSetting
 
   const customer = quotation.customers as any;
 
+  async function deleteQuotation() {
+    setDeleting(true);
+    const supabase = createClient();
+    try {
+      await supabase.from("quotation_items").delete().eq("quotation_id", quotation.id);
+      const { error } = await supabase.from("quotations").delete().eq("id", quotation.id);
+      if (error) throw error;
+      toast.success("Quotation deleted");
+      router.push("/quotations");
+    } catch (err: any) {
+      toast.error(err.message ?? "Failed to delete");
+      setDeleting(false);
+      setDeleteConfirm(false);
+    }
+  }
+
   function openWhatsApp() {
     const phone = customer?.phone;
     if (!phone) return;
@@ -122,6 +140,18 @@ export function QuotationDetailContent({ quotation: initial, company, docSetting
           <Link href={`/quotations/${quotation.id}/edit`}>
             <Button variant="outline" size="md"><Edit2 className="h-4 w-4" />Edit</Button>
           </Link>
+
+          {deleteConfirm ? (
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-red-600 font-medium">Delete?</span>
+              <Button size="sm" variant="outline" onClick={() => setDeleteConfirm(false)} className="text-xs">Cancel</Button>
+              <Button size="sm" variant="outline" loading={deleting} onClick={deleteQuotation} className="border-red-300 text-red-600 hover:bg-red-50 text-xs">Yes, Delete</Button>
+            </div>
+          ) : (
+            <Button variant="outline" size="md" onClick={() => setDeleteConfirm(true)} className="border-red-200 text-red-500 hover:bg-red-50">
+              <Trash2 className="h-4 w-4" />Delete
+            </Button>
+          )}
 
           {customer?.phone && (
             <Button

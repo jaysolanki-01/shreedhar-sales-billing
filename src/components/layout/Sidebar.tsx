@@ -4,8 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, FileText, Receipt, Users,
-  CreditCard, BarChart2, Settings, X,
+  CreditCard, BarChart2, Settings, X, LogOut,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -25,6 +27,14 @@ interface SidebarProps {
 
 export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  }
 
   function isActive(href: string) {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -105,7 +115,20 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         })}
       </nav>
 
-      <div className="pb-5" />
+      {/* Logout */}
+      <div className="px-3 pb-5">
+        <div style={{ height: 1, background: "#F0F2FA", marginBottom: 8 }} />
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 hover:bg-red-50 group"
+          style={{ fontSize: 13, fontWeight: 500, color: "#9CA3AF" }}
+        >
+          <div style={{ width: 30, height: 30, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <LogOut style={{ width: 14, height: 14 }} className="group-hover:text-red-500" />
+          </div>
+          <span className="group-hover:text-red-500">Sign Out</span>
+        </button>
+      </div>
     </div>
   );
 
