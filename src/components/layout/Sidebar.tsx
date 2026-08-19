@@ -48,23 +48,13 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       {/* Logo */}
       <div className="px-5 pt-6 pb-5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div
-              className="flex-shrink-0 rounded-xl overflow-hidden"
-              style={{ width: 38, height: 38, background: "#EEF2FF", border: "1px solid #C7D2FE" }}
-            >
-              <img
-                src="/logo.png"
-                alt="Shreedhar Sales"
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  const t = e.currentTarget;
-                  t.style.display = "none";
-                  const p = t.parentElement;
-                  if (p) p.innerHTML = '<span style="display:flex;align-items:center;justify-content:center;height:100%;font-weight:700;font-size:13px;color:#4F46E5;letter-spacing:-0.02em;">SS</span>';
-                }}
-              />
-            </div>
+          <div className="flex items-center gap-2">
+            <img
+              src="/logo.png"
+              alt="Shreedhar Sales"
+              className="flex-shrink-0 object-contain"
+              style={{ width: 44, height: 44 }}
+            />
             <div>
               <p style={{ fontSize: 13, fontWeight: 700, color: "#1A1740", lineHeight: 1.2, letterSpacing: "-0.02em" }}>Shreedhar</p>
               <p style={{ fontSize: 10, fontWeight: 500, color: "#818CF8", letterSpacing: "0.06em", lineHeight: 1.4, textTransform: "uppercase" }}>Sales & Co.</p>

@@ -12,6 +12,10 @@ const lexend = Lexend({
 export const metadata: Metadata = {
   title: "Shreedhar Sales — Billing",
   description: "Professional billing and quotation management for Shreedhar Sales",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
