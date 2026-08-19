@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Poppins } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
-const montserrat = Montserrat({
+const poppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-montserrat",
+  variable: "--font-poppins",
   weight: ["400", "500", "600", "700"],
 });
 
@@ -16,17 +16,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${montserrat.variable} h-full`}>
+    <html lang="en" className={`${poppins.variable} h-full`}>
       <body className="h-full antialiased">
         {children}
         <Toaster
           position="top-right"
           toastOptions={{
             style: {
-              background: "#2F1D13",
-              color: "#F7F2EC",
-              border: "1px solid #7E441C",
               fontFamily: "var(--font-sans)",
+              borderRadius: "10px",
+              fontSize: "13px",
+              border: "1px solid #E0E7FF",
+              boxShadow: "0 8px 24px rgba(79,70,229,0.12)",
             },
           }}
         />

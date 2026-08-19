@@ -12,15 +12,23 @@ import { Button } from "@/components/ui/button";
 
 const schema = z.object({
   name: z.string().min(1, "Customer name is required"),
-  company_name: z.string().default(""),
-  phone: z.string().default(""),
-  email: z.string().email("Invalid email").or(z.literal("")).default(""),
-  address: z.string().default(""),
-  gstin: z.string().default(""),
-  notes: z.string().default(""),
+  company_name: z.string(),
+  phone: z.string(),
+  email: z.string().email("Invalid email").or(z.literal("")),
+  address: z.string(),
+  gstin: z.string(),
+  notes: z.string(),
 });
 
-type FormData = z.infer<typeof schema>;
+type FormData = {
+  name: string;
+  company_name: string;
+  phone: string;
+  email: string;
+  address: string;
+  gstin: string;
+  notes: string;
+};
 
 interface Props {
   open: boolean;
@@ -31,7 +39,7 @@ interface Props {
 
 export function CustomerFormDialog({ open, onOpenChange, onSave, customer }: Props) {
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: { name: "", company_name: "", phone: "", email: "", address: "", gstin: "", notes: "" },
   });
 

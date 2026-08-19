@@ -1,47 +1,47 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand Colors */
-  --color-brand-dark: #2F1D13;
-  --color-brand-brown: #7E441C;
-  --color-brand-copper: #A0551F;
-  --color-brand-gold: #E6AE73;
-  --color-brand-beige: #F7F2EC;
-  --color-brand-beige-dark: #EDE5D8;
+  /* Indigo Modern — brand palette */
+  --color-brand-dark: #1E1B4B;
+  --color-brand-brown: #4F46E5;
+  --color-brand-copper: #4338CA;
+  --color-brand-gold: #7C3AED;
+  --color-brand-beige: #EEF2FF;
+  --color-brand-beige-dark: #E0E7FF;
   --color-brand-white: #FFFFFF;
 
   /* Semantic tokens */
-  --color-background: #F7F2EC;
+  --color-background: #F5F3FF;
   --color-surface: #FFFFFF;
-  --color-border: #E0D5C9;
-  --color-border-strong: #C8B8A8;
-  --color-text-primary: #2F1D13;
-  --color-text-secondary: #7E441C;
-  --color-text-muted: #9A7B62;
-  --color-text-placeholder: #B8A898;
+  --color-border: #E0E7FF;
+  --color-border-strong: #C7D2FE;
+  --color-text-primary: #1E1B4B;
+  --color-text-secondary: #3730A3;
+  --color-text-muted: #6B7280;
+  --color-text-placeholder: #9CA3AF;
 
-  /* Status colors (subtle, brand-aligned) */
-  --color-status-draft-bg: #F7F2EC;
-  --color-status-draft-text: #9A7B62;
-  --color-status-sent-bg: #EBF4FB;
-  --color-status-sent-text: #2E6DA4;
-  --color-status-accepted-bg: #EBF7EE;
-  --color-status-accepted-text: #276A3A;
-  --color-status-rejected-bg: #FBF0EE;
-  --color-status-rejected-text: #A0341B;
-  --color-status-expired-bg: #F5F0E8;
-  --color-status-expired-text: #7A6040;
-  --color-status-paid-bg: #EBF7EE;
-  --color-status-paid-text: #276A3A;
-  --color-status-pending-bg: #FEF9EE;
-  --color-status-pending-text: #9A6800;
-  --color-status-partial-bg: #EBF4FB;
-  --color-status-partial-text: #2E6DA4;
-  --color-status-overdue-bg: #FBF0EE;
-  --color-status-overdue-text: #A0341B;
+  /* Status colors */
+  --color-status-draft-bg: #F3F4F6;
+  --color-status-draft-text: #6B7280;
+  --color-status-sent-bg: #EEF2FF;
+  --color-status-sent-text: #4338CA;
+  --color-status-accepted-bg: #ECFDF5;
+  --color-status-accepted-text: #065F46;
+  --color-status-rejected-bg: #FEF2F2;
+  --color-status-rejected-text: #991B1B;
+  --color-status-expired-bg: #F3F4F6;
+  --color-status-expired-text: #6B7280;
+  --color-status-paid-bg: #ECFDF5;
+  --color-status-paid-text: #065F46;
+  --color-status-pending-bg: #FFFBEB;
+  --color-status-pending-text: #92400E;
+  --color-status-partial-bg: #EEF2FF;
+  --color-status-partial-text: #4338CA;
+  --color-status-overdue-bg: #FEF2F2;
+  --color-status-overdue-text: #991B1B;
 
   /* Font */
-  --font-sans: var(--font-montserrat, ui-sans-serif, system-ui);
+  --font-sans: var(--font-poppins, ui-sans-serif, system-ui);
 
   /* Radius */
   --radius-sm: 6px;
@@ -50,63 +50,32 @@
   --radius-xl: 16px;
 
   /* Shadows */
-  --shadow-card: 0 1px 3px 0 rgba(47, 29, 19, 0.06), 0 1px 2px -1px rgba(47, 29, 19, 0.04);
-  --shadow-dropdown: 0 4px 16px -2px rgba(47, 29, 19, 0.10), 0 2px 4px -2px rgba(47, 29, 19, 0.06);
-  --shadow-modal: 0 20px 50px -10px rgba(47, 29, 19, 0.20);
+  --shadow-card: 0 1px 3px rgba(79, 70, 229, 0.06), 0 1px 2px rgba(79, 70, 229, 0.04);
+  --shadow-dropdown: 0 8px 24px -4px rgba(79, 70, 229, 0.12), 0 2px 6px -2px rgba(79, 70, 229, 0.06);
+  --shadow-modal: 0 20px 60px -12px rgba(79, 70, 229, 0.18);
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html {
-  height: 100%;
-}
+* { box-sizing: border-box; }
+html { height: 100%; }
 
 body {
-  background-color: #F7F2EC;
-  color: #2F1D13;
+  background-color: #F5F3FF;
+  color: #1E1B4B;
   font-family: var(--font-sans);
   min-height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #F7F2EC;
-}
-::-webkit-scrollbar-thumb {
-  background: #C8B8A8;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #9A7B62;
-}
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #C7D2FE; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #818CF8; }
 
-/* Focus ring */
-:focus-visible {
-  outline: 2px solid #7E441C;
-  outline-offset: 2px;
-}
+:focus-visible { outline: 2px solid #4F46E5; outline-offset: 2px; }
 
-/* Remove default number input spinners */
 input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input[type="number"] {
-  -moz-appearance: textfield;
-}
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }
 
-/* Print styles */
-@media print {
-  .no-print {
-    display: none !important;
-  }
-}
+@media print { .no-print { display: none !important; } }

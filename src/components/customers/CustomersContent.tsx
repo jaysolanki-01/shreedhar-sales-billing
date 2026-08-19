@@ -37,7 +37,7 @@ export function CustomersContent({ customers: initial, userId }: Props) {
         .eq("id", editCustomer.id)
         .select()
         .single();
-      if (error) { toast.error("Failed to update customer"); return; }
+      if (error) { toast.error(error.message || "Failed to update customer"); return; }
       setCustomers((prev) => prev.map((c) => (c.id === editCustomer.id ? updated : c)));
       toast.success("Customer updated");
     } else {
@@ -46,7 +46,7 @@ export function CustomersContent({ customers: initial, userId }: Props) {
         .insert({ ...data, user_id: userId })
         .select()
         .single();
-      if (error) { toast.error("Failed to add customer"); return; }
+      if (error) { toast.error(error.message || "Failed to add customer"); return; }
       setCustomers((prev) => [...prev, created]);
       toast.success("Customer added");
     }

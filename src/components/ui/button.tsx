@@ -5,27 +5,27 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-all duration-150 cursor-pointer disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-[13px] font-semibold transition-all duration-150 cursor-pointer disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1",
   {
     variants: {
       variant: {
         primary:
-          "bg-brand-dark text-brand-beige hover:bg-brand-brown focus-visible:ring-brand-dark",
+          "bg-[#4F46E5] text-white hover:bg-[#4338CA] shadow-sm focus-visible:ring-[#4F46E5]",
         secondary:
-          "bg-brand-beige border border-brand-border text-brand-dark hover:bg-brand-beige-dark focus-visible:ring-brand-brown",
+          "bg-white border border-[#E0E7FF] text-[#3730A3] hover:bg-[#EEF2FF] shadow-sm focus-visible:ring-[#4F46E5]",
         outline:
-          "border border-brand-border bg-surface text-brand-dark hover:bg-brand-beige focus-visible:ring-brand-brown",
+          "border border-[#E0E7FF] bg-white text-[#4F46E5] hover:bg-[#EEF2FF] focus-visible:ring-[#4F46E5]",
         ghost:
-          "text-brand-dark hover:bg-brand-beige focus-visible:ring-brand-brown",
+          "text-[#6B7280] hover:text-[#4F46E5] hover:bg-[#EEF2FF] focus-visible:ring-[#4F46E5]",
         danger:
-          "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500",
+          "bg-red-600 text-white hover:bg-red-700 shadow-sm focus-visible:ring-red-500",
         "danger-outline":
-          "border border-red-300 text-red-600 hover:bg-red-50 focus-visible:ring-red-500",
+          "border border-red-200 text-red-600 hover:bg-red-50 focus-visible:ring-red-500",
       },
       size: {
         sm: "h-8 px-3 text-xs",
-        md: "h-9 px-4 text-sm",
-        lg: "h-10 px-6 text-sm",
+        md: "h-9 px-4",
+        lg: "h-10 px-5",
         icon: "h-9 w-9",
         "icon-sm": "h-7 w-7",
       },

@@ -3,28 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
-  FileText,
-  Receipt,
-  Users,
-  CreditCard,
-  BarChart2,
-  Settings,
-  LogOut,
-  X,
+  LayoutDashboard, FileText, Receipt, Users,
+  CreditCard, BarChart2, Settings, LogOut, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 const navItems = [
-  { label: "Dashboard", href: "/", icon: LayoutDashboard },
-  { label: "Quotations", href: "/quotations", icon: FileText },
-  { label: "Invoices", href: "/invoices", icon: Receipt },
-  { label: "Customers", href: "/customers", icon: Users },
-  { label: "Payments", href: "/payments", icon: CreditCard },
-  { label: "Reports", href: "/reports", icon: BarChart2 },
-  { label: "Settings", href: "/settings", icon: Settings },
+  { label: "Dashboard",  href: "/dashboard",  icon: LayoutDashboard },
+  { label: "Quotations", href: "/quotations",  icon: FileText },
+  { label: "Invoices",   href: "/invoices",    icon: Receipt },
+  { label: "Customers",  href: "/customers",   icon: Users },
+  { label: "Payments",   href: "/payments",    icon: CreditCard },
+  { label: "Reports",    href: "/reports",     icon: BarChart2 },
+  { label: "Settings",   href: "/settings",    icon: Settings },
 ];
 
 interface SidebarProps {
@@ -44,62 +37,91 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   }
 
   function isActive(href: string) {
-    if (href === "/") return pathname === "/";
+    if (href === "/dashboard") return pathname === "/dashboard";
     return pathname.startsWith(href);
   }
 
   const content = (
-    <div className="flex flex-col h-full bg-brand-dark">
+    <div className="flex flex-col h-full bg-white" style={{ borderRight: "1px solid #E0E7FF" }}>
+
       {/* Logo */}
-      <div className="flex items-center justify-between px-5 py-5 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-brand-gold flex items-center justify-center flex-shrink-0 overflow-hidden">
-            {/* Logo placeholder — replace src with /logo.png once file is placed in /public */}
-            <img src="/logo.png" alt="Shreedhar Sales" className="w-full h-full object-contain" onError={(e) => {
-              const t = e.currentTarget;
-              t.style.display = "none";
-              t.parentElement!.innerHTML = '<span class="text-brand-dark font-bold text-sm">SS</span>';
-            }} />
+      <div className="px-4 pt-5 pb-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="flex-shrink-0 rounded-xl overflow-hidden"
+              style={{ width: 40, height: 40, background: "#EEF2FF", border: "1px solid #C7D2FE" }}
+            >
+              <img
+                src="/logo.png"
+                alt="Shreedhar Sales"
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  const t = e.currentTarget;
+                  t.style.display = "none";
+                  const p = t.parentElement;
+                  if (p) p.innerHTML = '<span style="display:flex;align-items:center;justify-content:center;height:100%;font-weight:700;font-size:14px;color:#4F46E5;">SS</span>';
+                }}
+              />
+            </div>
+            <div>
+              <p style={{ fontSize: 13.5, fontWeight: 600, color: "#1E1B4B", lineHeight: 1.2 }}>Shreedhar</p>
+              <p style={{ fontSize: 10.5, fontWeight: 500, color: "#818CF8", letterSpacing: "0.04em", lineHeight: 1.3 }}>Sales & Co.</p>
+            </div>
           </div>
-          <div>
-            <p className="text-brand-gold font-bold text-sm leading-tight">Shreedhar</p>
-            <p className="text-brand-gold/70 text-xs leading-tight">Sales</p>
-          </div>
+          {onMobileClose && (
+            <button onClick={onMobileClose} style={{ color: "#9CA3AF" }} className="lg:hidden hover:text-gray-600 transition-colors">
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
-        {onMobileClose && (
-          <button onClick={onMobileClose} className="text-white/60 hover:text-white lg:hidden">
-            <X className="h-5 w-5" />
-          </button>
-        )}
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        {navItems.map(({ label, href, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            onClick={onMobileClose}
-            className={cn(
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150",
-              isActive(href)
-                ? "bg-brand-brown text-brand-gold"
-                : "text-white/60 hover:text-white hover:bg-white/8"
-            )}
-          >
-            <Icon className={cn("h-4 w-4 flex-shrink-0", isActive(href) ? "text-brand-gold" : "text-white/50")} />
-            {label}
-          </Link>
-        ))}
+      {/* Divider */}
+      <div style={{ height: 1, background: "#EEF2FF", margin: "0 16px 4px" }} />
+
+      {/* Nav */}
+      <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
+        {navItems.map(({ label, href, icon: Icon }) => {
+          const active = isActive(href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              onClick={onMobileClose}
+              className={cn("flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-150")}
+              style={{
+                fontSize: 13,
+                fontWeight: active ? 600 : 500,
+                background: active ? "#EEF2FF" : "transparent",
+                color: active ? "#4F46E5" : "#6B7280",
+              }}
+              onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "#F5F3FF"; }}
+              onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+            >
+              <Icon
+                style={{
+                  width: 15, height: 15, flexShrink: 0,
+                  color: active ? "#4F46E5" : "#9CA3AF",
+                }}
+              />
+              {label}
+            </Link>
+          );
+        })}
       </nav>
 
       {/* Bottom */}
-      <div className="px-3 pb-4 border-t border-white/10 pt-3">
+      <div className="px-3 pb-4 pt-2">
+        <div style={{ height: 1, background: "#EEF2FF", margin: "0 4px 8px" }} />
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-white/50 hover:text-white hover:bg-white/8 transition-all"
+          className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg transition-all"
+          style={{ fontSize: 13, fontWeight: 500, color: "#9CA3AF", background: "transparent" }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#F5F3FF"; (e.currentTarget as HTMLElement).style.color = "#6B7280"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#9CA3AF"; }}
         >
-          <LogOut className="h-4 w-4 flex-shrink-0" />
+          <LogOut style={{ width: 15, height: 15, flexShrink: 0 }} />
           Sign Out
         </button>
       </div>
@@ -108,16 +130,13 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
   return (
     <>
-      {/* Desktop sidebar */}
       <aside className="hidden lg:flex w-56 flex-shrink-0 flex-col h-screen sticky top-0">
         {content}
       </aside>
-
-      {/* Mobile drawer overlay */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={onMobileClose} />
-          <aside className="absolute left-0 top-0 h-full w-56 flex flex-col">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onMobileClose} />
+          <aside className="absolute left-0 top-0 h-full w-56 flex flex-col shadow-xl">
             {content}
           </aside>
         </div>
