@@ -136,7 +136,7 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
       {/* Greeting */}
       <div className="pt-1">
         <p style={{ fontSize: 12, fontWeight: 500, color: "#9CA3AF", letterSpacing: "0.02em" }}>{greeting}</p>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: "#1A1740", letterSpacing: "-0.03em", lineHeight: 1.2, marginTop: 2 }}>Shreedhar Sales</h2>
+        <h2 style={{ fontSize: 20, fontWeight: 600, color: "#111827", letterSpacing: "-0.02em", lineHeight: 1.2, marginTop: 2 }}>Shreedhar Sales</h2>
       </div>
 
       {/* Summary Cards — no borders, shadow only */}
@@ -158,13 +158,13 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
       </div>
 
       {/* Invoice Activity — clean card, no border */}
-      <div style={{ background: "#fff", borderRadius: 16, boxShadow: "0 2px 12px rgba(30,27,75,0.07), 0 1px 3px rgba(30,27,75,0.04)", overflow: "hidden" }}>
+      <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", overflow: "hidden" }}>
 
         {/* Header row */}
-        <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, borderBottom: "1px solid #F0F2FA" }}>
-          <p style={{ fontSize: 14, fontWeight: 600, color: "#1A1740", letterSpacing: "-0.01em" }}>Invoice Activity</p>
+        <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, borderBottom: "1px solid #E5E7EB" }}>
+          <p style={{ fontSize: 14, fontWeight: 600, color: "#111827", letterSpacing: "-0.01em" }}>Invoice Activity</p>
           {/* Period tabs */}
-          <div style={{ display: "flex", gap: 2, background: "#F4F6FB", borderRadius: 10, padding: 3, overflowX: "auto", scrollbarWidth: "none" as any }}>
+          <div style={{ display: "flex", gap: 2, background: "#F3F4F6", borderRadius: 8, padding: 3, overflowX: "auto", scrollbarWidth: "none" as any }}>
             {PERIODS.map(p => (
               <button
                 key={p.value}
@@ -178,9 +178,9 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
                   border: "none",
                   cursor: "pointer",
                   transition: "all 0.15s",
-                  background: period === p.value ? "#1A1740" : "transparent",
+                  background: period === p.value ? "#111827" : "transparent",
                   color: period === p.value ? "#fff" : "#9CA3AF",
-                  boxShadow: period === p.value ? "0 1px 4px rgba(30,27,75,0.18)" : "none",
+                  boxShadow: "none",
                 }}
               >
                 {p.label}
@@ -190,7 +190,7 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
         </div>
 
         {/* Period Stats — 4 pills in a row */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0, padding: "12px 16px", borderBottom: "1px solid #F0F2FA" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0, padding: "12px 16px", borderBottom: "1px solid #E5E7EB" }}>
           <MiniStat label="Invoices" value={periodStats.count.toString()} />
           <MiniStat label="Total Billed" value={formatCurrency(periodStats.total)} accent />
           <MiniStat label="Collected" value={formatCurrency(periodStats.paid)} green />
@@ -199,8 +199,8 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
 
         {/* Weekly breakdown */}
         {weeks.length > 0 && (
-          <div style={{ padding: "12px 16px", borderBottom: "1px solid #F0F2FA" }}>
-            <p style={{ fontSize: 10, fontWeight: 600, color: "#C4C9DC", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Weekly Breakdown</p>
+          <div style={{ padding: "12px 16px", borderBottom: "1px solid #E5E7EB" }}>
+            <p style={{ fontSize: 10, fontWeight: 600, color: "#D1D5DB", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Weekly Breakdown</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 6 }} className="sm:grid-cols-4" >
               {weeks.map(week => (
                 <button
@@ -213,12 +213,12 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
                     border: "none",
                     cursor: "pointer",
                     transition: "all 0.15s",
-                    background: selectedWeek === week.label ? "#EEF2FF" : "#F7F8FD",
+                    background: selectedWeek === week.label ? "#EEF2FF" : "#F9FAFB",
                     boxShadow: selectedWeek === week.label ? "inset 0 0 0 1.5px #4F46E5" : "none",
                   }}
                 >
                   <p style={{ fontSize: 10, fontWeight: 600, color: "#9CA3AF" }}>{week.label}</p>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: "#1A1740", marginTop: 2 }}>{week.count} invoices</p>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginTop: 2 }}>{week.count} invoices</p>
                   <p style={{ fontSize: 11, color: "#4F46E5", fontWeight: 600, marginTop: 1 }}>{formatCurrency(week.total)}</p>
                 </button>
               ))}
@@ -232,7 +232,7 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
             <div style={{ padding: "40px 0", textAlign: "center", fontSize: 13, color: "#9CA3AF" }}>Loading…</div>
           ) : displayInvoices.length === 0 ? (
             <div style={{ padding: "40px 0", textAlign: "center" }}>
-              <p style={{ fontSize: 13, color: "#C4C9DC" }}>No invoices in this period</p>
+              <p style={{ fontSize: 13, color: "#D1D5DB" }}>No invoices in this period</p>
             </div>
           ) : (
             displayInvoices.slice(0, 8).map((inv, i) => (
@@ -240,11 +240,11 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
                 style={{
                   display: "flex", alignItems: "center", justifyContent: "space-between",
                   padding: "12px 20px",
-                  borderTop: i === 0 ? "none" : "1px solid #F7F8FD",
+                  borderTop: i === 0 ? "none" : "1px solid #F9FAFB",
                   transition: "background 0.12s",
                   textDecoration: "none",
                 }}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#F7F8FD"}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#F9FAFB"}
                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
@@ -252,7 +252,7 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
                     <Receipt style={{ width: 13, height: 13, color: "#818CF8" }} />
                   </div>
                   <div style={{ minWidth: 0 }}>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: "#1A1740", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{inv.invoice_number}</p>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{inv.invoice_number}</p>
                     <p style={{ fontSize: 11.5, color: "#9CA3AF", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {(inv.customers as any)?.name ?? ""} · {formatDate(inv.date)}
                     </p>
@@ -260,10 +260,10 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0, marginLeft: 8 }}>
                   <div style={{ textAlign: "right" }}>
-                    <p style={{ fontSize: 13, fontWeight: 700, color: "#1A1740" }}>{formatCurrency(Number(inv.grand_total))}</p>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{formatCurrency(Number(inv.grand_total))}</p>
                     <PaymentStatusBadge status={inv.payment_status} />
                   </div>
-                  <ArrowUpRight style={{ width: 13, height: 13, color: "#C4C9DC" }} className="hidden lg:block" />
+                  <ArrowUpRight style={{ width: 13, height: 13, color: "#D1D5DB" }} className="hidden lg:block" />
                 </div>
               </Link>
             ))
@@ -271,7 +271,7 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
         </div>
 
         {!loading && invoices.length > 8 && (
-          <div style={{ padding: "12px 20px", borderTop: "1px solid #F0F2FA", textAlign: "center" }}>
+          <div style={{ padding: "12px 20px", borderTop: "1px solid #E5E7EB", textAlign: "center" }}>
             <Link href="/invoices" style={{ fontSize: 12.5, color: "#4F46E5", fontWeight: 600, textDecoration: "none" }}>
               View all {invoices.length} invoices →
             </Link>
@@ -290,26 +290,26 @@ function StatCard({ icon, label, value, href, color, bg }: {
       <div
         style={{
           background: "#fff",
-          borderRadius: 14,
+          borderRadius: 12,
           padding: "16px 16px 14px",
-          boxShadow: "0 2px 10px rgba(30,27,75,0.07), 0 1px 2px rgba(30,27,75,0.03)",
-          transition: "transform 0.15s, box-shadow 0.15s",
+          border: "1px solid #E5E7EB",
+          transition: "background 0.1s",
         }}
-        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 20px rgba(30,27,75,0.11), 0 2px 6px rgba(30,27,75,0.05)"; }}
-        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ""; (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 10px rgba(30,27,75,0.07), 0 1px 2px rgba(30,27,75,0.03)"; }}
+        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#F9FAFB"; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#fff"; }}
       >
         <div style={{ width: 32, height: 32, borderRadius: 8, background: bg, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12, color }}>
           {icon}
         </div>
         <p style={{ fontSize: 11, fontWeight: 500, color: "#9CA3AF", letterSpacing: "0.01em" }}>{label}</p>
-        <p style={{ fontSize: 20, fontWeight: 700, color: "#1A1740", letterSpacing: "-0.03em", marginTop: 2, lineHeight: 1.1 }}>{value}</p>
+        <p style={{ fontSize: 20, fontWeight: 700, color: "#111827", letterSpacing: "-0.03em", marginTop: 2, lineHeight: 1.1 }}>{value}</p>
       </div>
     </Link>
   );
 }
 
 function MiniStat({ label, value, accent, green, warn }: { label: string; value: string; accent?: boolean; green?: boolean; warn?: boolean }) {
-  const color = green ? "#059669" : warn ? "#D97706" : accent ? "#4F46E5" : "#1A1740";
+  const color = green ? "#059669" : warn ? "#D97706" : accent ? "#4F46E5" : "#111827";
   return (
     <div style={{ padding: "6px 8px" }}>
       <p style={{ fontSize: 10.5, color: "#9CA3AF", fontWeight: 500 }}>{label}</p>

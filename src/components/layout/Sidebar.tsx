@@ -4,11 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, FileText, Receipt, Users,
-  CreditCard, BarChart2, Settings, X, LogOut, ShieldCheck,
+  CreditCard, BarChart2, Settings, LogOut, ShieldCheck,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Dashboard",  href: "/dashboard",  icon: LayoutDashboard },
@@ -21,12 +20,7 @@ const navItems = [
   { label: "Admin",      href: "/admin",       icon: ShieldCheck },
 ];
 
-interface SidebarProps {
-  mobileOpen?: boolean;
-  onMobileClose?: () => void;
-}
-
-export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
+export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -42,64 +36,50 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
     return pathname.startsWith(href);
   }
 
-  const content = (
-    <div className="flex flex-col h-full" style={{ background: "#FFFFFF", borderRight: "1px solid #E5E9F5" }}>
-
+  return (
+    <aside
+      className="hidden lg:flex w-52 flex-shrink-0 flex-col h-screen sticky top-0"
+      style={{ background: "#FFFFFF", borderRight: "1px solid #E5E7EB" }}
+    >
       {/* Logo */}
-      <div className="px-5 pt-6 pb-5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img
-              src="/logo.png"
-              alt="Shreedhar Sales"
-              className="flex-shrink-0 object-contain"
-              style={{ width: 44, height: 44 }}
-            />
-            <div>
-              <p style={{ fontSize: 13, fontWeight: 700, color: "#1A1740", lineHeight: 1.2, letterSpacing: "-0.02em" }}>Shreedhar</p>
-              <p style={{ fontSize: 10, fontWeight: 500, color: "#818CF8", letterSpacing: "0.06em", lineHeight: 1.4, textTransform: "uppercase" }}>Sales & Co.</p>
-            </div>
-          </div>
-          {onMobileClose && (
-            <button onClick={onMobileClose} style={{ color: "#9CA3AF" }} className="lg:hidden p-1 rounded-md hover:bg-gray-100 transition-colors">
-              <X className="h-4 w-4" />
-            </button>
-          )}
+      <div className="px-5 pt-6 pb-5 flex items-center gap-2.5">
+        <img
+          src="/logo.png"
+          alt="Shreedhar Sales"
+          className="flex-shrink-0 object-contain"
+          style={{ width: 36, height: 36 }}
+        />
+        <div>
+          <p style={{ fontSize: 13, fontWeight: 700, color: "#111827", lineHeight: 1.2, letterSpacing: "-0.02em" }}>Shreedhar</p>
+          <p style={{ fontSize: 10, fontWeight: 500, color: "#9CA3AF", letterSpacing: "0.04em", lineHeight: 1.4, textTransform: "uppercase" }}>Sales & Co.</p>
         </div>
       </div>
 
-      {/* Divider */}
-      <div style={{ height: 1, background: "#F0F2FA", margin: "0 16px 6px" }} />
-
-      {/* Nav label */}
-      <p style={{ fontSize: 10, fontWeight: 600, color: "#9CA3AF", letterSpacing: "0.08em", textTransform: "uppercase", padding: "4px 20px 8px" }}>Menu</p>
-
       {/* Nav */}
-      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
         {navItems.map(({ label, href, icon: Icon }) => {
           const active = isActive(href);
           return (
             <Link
               key={href}
               href={href}
-              onClick={onMobileClose}
-              className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150")}
               style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "8px 10px",
+                borderRadius: 8,
                 fontSize: 13,
-                fontWeight: active ? 600 : 500,
-                letterSpacing: active ? "-0.01em" : "0",
-                background: active ? "#EEF2FF" : "transparent",
-                color: active ? "#4338CA" : "#6B7280",
+                fontWeight: active ? 600 : 400,
+                background: active ? "#F3F4F6" : "transparent",
+                color: active ? "#111827" : "#6B7280",
+                textDecoration: "none",
+                transition: "background 0.1s, color 0.1s",
               }}
-              onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "#F7F8FD"; }}
+              onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "#F9FAFB"; }}
               onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
             >
-              <div style={{
-                width: 30, height: 30, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-                background: active ? "#DBEAFE" : "transparent",
-              }}>
-                <Icon style={{ width: 14, height: 14, color: active ? "#4338CA" : "#9CA3AF" }} />
-              </div>
+              <Icon style={{ width: 16, height: 16, flexShrink: 0, color: active ? "#4F46E5" : "#9CA3AF" }} />
               {label}
             </Link>
           );
@@ -107,35 +87,32 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       </nav>
 
       {/* Logout */}
-      <div className="px-3 pb-5">
-        <div style={{ height: 1, background: "#F0F2FA", marginBottom: 8 }} />
+      <div className="px-3 pb-5" style={{ borderTop: "1px solid #E5E7EB" }}>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 hover:bg-red-50 group"
-          style={{ fontSize: 13, fontWeight: 500, color: "#9CA3AF" }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            width: "100%",
+            padding: "8px 10px",
+            marginTop: 8,
+            borderRadius: 8,
+            fontSize: 13,
+            fontWeight: 400,
+            color: "#9CA3AF",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            transition: "background 0.1s, color 0.1s",
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#FEF2F2"; (e.currentTarget as HTMLElement).style.color = "#DC2626"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#9CA3AF"; }}
         >
-          <div style={{ width: 30, height: 30, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <LogOut style={{ width: 14, height: 14 }} className="group-hover:text-red-500" />
-          </div>
-          <span className="group-hover:text-red-500">Sign Out</span>
+          <LogOut style={{ width: 16, height: 16, flexShrink: 0 }} />
+          Sign out
         </button>
       </div>
-    </div>
-  );
-
-  return (
-    <>
-      <aside className="hidden lg:flex w-56 flex-shrink-0 flex-col h-screen sticky top-0">
-        {content}
-      </aside>
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onMobileClose} />
-          <aside className="absolute left-0 top-0 h-full w-56 flex flex-col shadow-2xl">
-            {content}
-          </aside>
-        </div>
-      )}
-    </>
+    </aside>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Receipt, ChevronRight } from "lucide-react";
+import { Search, Receipt, ChevronRight, Download } from "lucide-react";
 import { Invoice, InvoicePaymentStatus } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { PaymentStatusBadge } from "@/components/ui/badge";
@@ -50,27 +50,47 @@ export function InvoicesContent() {
   const totalPending = filtered.filter((i) => i.payment_status !== "paid").reduce((s, i) => s + Number(i.balance_due), 0);
 
   return (
-    <div className="px-4 lg:px-8 py-6 max-w-5xl mx-auto w-full">
+    <div className="px-4 lg:px-6 py-5 max-w-4xl mx-auto w-full">
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
-        <div className="relative flex-1 max-w-sm w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-5">
+        <div className="relative flex-1 max-w-xs w-full">
+          <Search style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", width: 14, height: 14, color: "#9CA3AF" }} />
           <input
             type="text"
-            placeholder="Search invoices..."
+            placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-9 rounded-md border border-brand-border bg-surface pl-9 pr-3 text-sm text-brand-dark placeholder:text-brand-placeholder focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown"
+            style={{
+              width: "100%",
+              height: 36,
+              borderRadius: 8,
+              border: "1px solid #E5E7EB",
+              background: "#FFFFFF",
+              paddingLeft: 32,
+              paddingRight: 12,
+              fontSize: 13,
+              color: "#111827",
+              outline: "none",
+            }}
           />
         </div>
-        <div className="flex gap-1 bg-brand-beige rounded-lg p-1 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+        <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
           {STATUS_FILTERS.map((f) => (
             <button
               key={f.value}
               onClick={() => setStatusFilter(f.value)}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
-                statusFilter === f.value ? "bg-brand-dark text-brand-gold" : "text-brand-muted hover:text-brand-dark"
-              }`}
+              style={{
+                padding: "5px 12px",
+                borderRadius: 6,
+                fontSize: 12,
+                fontWeight: statusFilter === f.value ? 600 : 400,
+                background: statusFilter === f.value ? "#111827" : "transparent",
+                color: statusFilter === f.value ? "#FFFFFF" : "#6B7280",
+                border: statusFilter === f.value ? "1px solid #111827" : "1px solid #E5E7EB",
+                cursor: "pointer",
+                transition: "all 0.1s",
+                whiteSpace: "nowrap",
+              }}
             >
               {f.label}
             </button>
@@ -79,13 +99,13 @@ export function InvoicesContent() {
       </div>
 
       {statusFilter !== "all" && totalPending > 0 && (
-        <div className="mb-4 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 text-sm text-amber-800">
+        <div style={{ marginBottom: 16, background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 8, padding: "10px 16px", fontSize: 13, color: "#92400E" }}>
           Outstanding balance: <strong>{formatCurrency(totalPending)}</strong>
         </div>
       )}
 
       {loading ? (
-        <div className="py-16 text-center text-sm text-brand-muted">Loading…</div>
+        <div style={{ padding: "48px 0", textAlign: "center", fontSize: 13, color: "#9CA3AF" }}>Loading…</div>
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={<Receipt className="h-6 w-6" />}
@@ -94,30 +114,59 @@ export function InvoicesContent() {
           action={!search && statusFilter === "all" ? { label: "Create Invoice", href: "/invoices/new" } : undefined}
         />
       ) : (
-        <div className="bg-surface rounded-xl border border-brand-border shadow-card overflow-hidden">
-          <div className="hidden lg:grid grid-cols-[2fr_2fr_1fr_1.5fr_1.5fr_1fr_auto] gap-4 px-5 py-3 border-b border-brand-border bg-brand-beige text-xs font-semibold text-brand-muted uppercase tracking-wide">
+        <div style={{ background: "#FFFFFF", borderRadius: 12, border: "1px solid #E5E7EB", overflow: "hidden" }}>
+          <div className="hidden lg:grid" style={{
+            gridTemplateColumns: "2fr 2fr 1fr 1.5fr 1.5fr 1fr 40px",
+            gap: 16,
+            padding: "10px 20px",
+            borderBottom: "1px solid #E5E7EB",
+            fontSize: 11,
+            fontWeight: 600,
+            color: "#9CA3AF",
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+            background: "#F9FAFB",
+          }}>
             <span>Invoice</span><span>Customer</span><span>Date</span><span>Amount</span><span>Balance</span><span>Status</span><span></span>
           </div>
-          <div className="divide-y divide-brand-border">
-            {filtered.map((inv) => (
-              <Link
+          <div>
+            {filtered.map((inv, i) => (
+              <div
                 key={inv.id}
-                href={`/invoices/${inv.id}`}
-                className="flex items-center lg:grid lg:grid-cols-[2fr_2fr_1fr_1.5fr_1.5fr_1fr_auto] gap-4 px-5 py-3.5 hover:bg-brand-beige transition-colors group"
+                className="flex items-center lg:grid"
+                style={{
+                  gridTemplateColumns: "2fr 2fr 1fr 1.5fr 1.5fr 1fr 40px",
+                  gap: 16,
+                  padding: "14px 20px",
+                  borderTop: i === 0 ? "none" : "1px solid #F3F4F6",
+                  transition: "background 0.1s",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#F9FAFB"}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-brand-beige-dark flex items-center justify-center flex-shrink-0">
-                    <Receipt className="h-3.5 w-3.5 text-brand-muted" />
+                <Link href={`/invoices/${inv.id}`} style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0, textDecoration: "none" }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: "#F3F4F6", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Receipt style={{ width: 14, height: 14, color: "#9CA3AF" }} />
                   </div>
-                  <span className="text-sm font-semibold text-brand-dark">{inv.invoice_number}</span>
-                </div>
-                <span className="text-sm text-brand-dark truncate hidden lg:block">{(inv.customers as any)?.name ?? "—"}</span>
-                <span className="text-sm text-brand-muted hidden lg:block">{formatDate(inv.date)}</span>
-                <span className="text-sm font-semibold text-brand-dark ml-auto lg:ml-0">{formatCurrency(Number(inv.grand_total))}</span>
-                <span className="text-sm text-brand-muted hidden lg:block">{Number(inv.balance_due) > 0 ? formatCurrency(Number(inv.balance_due)) : "—"}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{inv.invoice_number}</span>
+                </Link>
+                <Link href={`/invoices/${inv.id}`} className="hidden lg:block" style={{ fontSize: 13, color: "#374151", textDecoration: "none", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{(inv.customers as any)?.name ?? "—"}</Link>
+                <Link href={`/invoices/${inv.id}`} className="hidden lg:block" style={{ fontSize: 13, color: "#6B7280", textDecoration: "none" }}>{formatDate(inv.date)}</Link>
+                <Link href={`/invoices/${inv.id}`} style={{ fontSize: 13, fontWeight: 600, color: "#111827", marginLeft: "auto", textDecoration: "none" }} className="lg:m-0">{formatCurrency(Number(inv.grand_total))}</Link>
+                <span className="hidden lg:block" style={{ fontSize: 13, color: "#6B7280" }}>{Number(inv.balance_due) > 0 ? formatCurrency(Number(inv.balance_due)) : "—"}</span>
                 <div className="hidden lg:block"><PaymentStatusBadge status={inv.payment_status} /></div>
-                <ChevronRight className="h-4 w-4 text-brand-muted opacity-0 group-hover:opacity-100 transition-opacity hidden lg:block" />
-              </Link>
+                <button
+                  title="Download PDF"
+                  onClick={() => window.open(`/api/pdf/invoice/${inv.id}`, "_blank")}
+                  className="hidden lg:flex"
+                  style={{ width: 32, height: 32, alignItems: "center", justifyContent: "center", borderRadius: 6, background: "transparent", border: "none", cursor: "pointer", color: "#9CA3AF", transition: "all 0.1s" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#EEF2FF"; (e.currentTarget as HTMLElement).style.color = "#4F46E5"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#9CA3AF"; }}
+                >
+                  <Download style={{ width: 14, height: 14 }} />
+                </button>
+              </div>
             ))}
           </div>
         </div>

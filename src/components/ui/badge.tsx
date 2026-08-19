@@ -16,7 +16,7 @@ export function Badge({ children, className }: BadgeProps) {
 }
 
 const quotationStatusStyles: Record<QuotationStatus, string> = {
-  draft: "bg-brand-beige text-brand-muted border border-brand-border",
+  draft: "bg-gray-100 text-gray-500 border border-gray-200",
   sent: "bg-blue-50 text-blue-700 border border-blue-200",
   accepted: "bg-green-50 text-green-700 border border-green-200",
   rejected: "bg-red-50 text-red-600 border border-red-200",

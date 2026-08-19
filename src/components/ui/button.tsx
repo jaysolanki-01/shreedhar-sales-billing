@@ -12,11 +12,11 @@ const buttonVariants = cva(
         primary:
           "bg-[#4F46E5] text-white hover:bg-[#4338CA] shadow-sm focus-visible:ring-[#4F46E5]",
         secondary:
-          "bg-white border border-[#E0E7FF] text-[#3730A3] hover:bg-[#EEF2FF] shadow-sm focus-visible:ring-[#4F46E5]",
+          "bg-white border border-[#E5E7EB] text-[#374151] hover:bg-[#F9FAFB] shadow-sm focus-visible:ring-[#4F46E5]",
         outline:
-          "border border-[#E0E7FF] bg-white text-[#4F46E5] hover:bg-[#EEF2FF] focus-visible:ring-[#4F46E5]",
+          "border border-[#E5E7EB] bg-white text-[#374151] hover:bg-[#F9FAFB] focus-visible:ring-[#4F46E5]",
         ghost:
-          "text-[#6B7280] hover:text-[#4F46E5] hover:bg-[#EEF2FF] focus-visible:ring-[#4F46E5]",
+          "text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6] focus-visible:ring-[#4F46E5]",
         danger:
           "bg-red-600 text-white hover:bg-red-700 shadow-sm focus-visible:ring-red-500",
         "danger-outline":

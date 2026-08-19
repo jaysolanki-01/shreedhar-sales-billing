@@ -49,27 +49,47 @@ export function QuotationsContent() {
   });
 
   return (
-    <div className="px-4 lg:px-8 py-6 max-w-5xl mx-auto w-full">
+    <div className="px-4 lg:px-6 py-5 max-w-4xl mx-auto w-full">
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
-        <div className="relative flex-1 max-w-sm w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-muted" />
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-5">
+        <div className="relative flex-1 max-w-xs w-full">
+          <Search style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", width: 14, height: 14, color: "#9CA3AF" }} />
           <input
             type="text"
-            placeholder="Search quotations..."
+            placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-9 rounded-md border border-brand-border bg-surface pl-9 pr-3 text-sm text-brand-dark placeholder:text-brand-placeholder focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown"
+            style={{
+              width: "100%",
+              height: 36,
+              borderRadius: 8,
+              border: "1px solid #E5E7EB",
+              background: "#FFFFFF",
+              paddingLeft: 32,
+              paddingRight: 12,
+              fontSize: 13,
+              color: "#111827",
+              outline: "none",
+            }}
           />
         </div>
-        <div className="flex gap-1 bg-brand-beige rounded-lg p-1 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+        <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
           {STATUS_FILTERS.map((f) => (
             <button
               key={f.value}
               onClick={() => setStatusFilter(f.value)}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
-                statusFilter === f.value ? "bg-brand-dark text-brand-gold" : "text-brand-muted hover:text-brand-dark"
-              }`}
+              style={{
+                padding: "5px 12px",
+                borderRadius: 6,
+                fontSize: 12,
+                fontWeight: statusFilter === f.value ? 600 : 400,
+                background: statusFilter === f.value ? "#111827" : "transparent",
+                color: statusFilter === f.value ? "#FFFFFF" : "#6B7280",
+                border: statusFilter === f.value ? "1px solid #111827" : "1px solid #E5E7EB",
+                cursor: "pointer",
+                transition: "all 0.1s",
+                whiteSpace: "nowrap",
+              }}
             >
               {f.label}
             </button>
@@ -78,7 +98,7 @@ export function QuotationsContent() {
       </div>
 
       {loading ? (
-        <div className="py-16 text-center text-sm text-brand-muted">Loading…</div>
+        <div style={{ padding: "48px 0", textAlign: "center", fontSize: 13, color: "#9CA3AF" }}>Loading…</div>
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={<FileText className="h-6 w-6" />}
@@ -87,29 +107,57 @@ export function QuotationsContent() {
           action={!search && statusFilter === "all" ? { label: "Create Quotation", href: "/quotations/new" } : undefined}
         />
       ) : (
-        <div className="bg-surface rounded-xl border border-brand-border shadow-card overflow-hidden">
-          <div className="hidden lg:grid grid-cols-[2fr_2fr_1fr_1.5fr_1fr_auto] gap-4 px-5 py-3 border-b border-brand-border bg-brand-beige text-xs font-semibold text-brand-muted uppercase tracking-wide">
+        <div style={{ background: "#FFFFFF", borderRadius: 12, border: "1px solid #E5E7EB", overflow: "hidden" }}>
+          {/* Table header — desktop only */}
+          <div className="hidden lg:grid" style={{
+            gridTemplateColumns: "2fr 2fr 1fr 1.5fr 1fr 40px",
+            gap: 16,
+            padding: "10px 20px",
+            borderBottom: "1px solid #E5E7EB",
+            fontSize: 11,
+            fontWeight: 600,
+            color: "#9CA3AF",
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+            background: "#F9FAFB",
+          }}>
             <span>Quotation</span><span>Customer</span><span>Date</span><span>Amount</span><span>Status</span><span></span>
           </div>
-          <div className="divide-y divide-brand-border">
-            {filtered.map((q) => (
-              <div key={q.id} className="flex items-center lg:grid lg:grid-cols-[2fr_2fr_1fr_1.5fr_1fr_auto] gap-4 px-5 py-3.5 hover:bg-brand-beige transition-colors group">
-                <Link href={`/quotations/${q.id}`} className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-brand-beige-dark flex items-center justify-center flex-shrink-0">
-                    <FileText className="h-3.5 w-3.5 text-brand-muted" />
+
+          <div style={{ divideColor: "#E5E7EB" }}>
+            {filtered.map((q, i) => (
+              <div
+                key={q.id}
+                className="flex items-center lg:grid"
+                style={{
+                  gridTemplateColumns: "2fr 2fr 1fr 1.5fr 1fr 40px",
+                  gap: 16,
+                  padding: "14px 20px",
+                  borderTop: i === 0 ? "none" : "1px solid #F3F4F6",
+                  transition: "background 0.1s",
+                }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#F9FAFB"}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}
+              >
+                <Link href={`/quotations/${q.id}`} style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0, textDecoration: "none" }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: "#F3F4F6", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <FileText style={{ width: 14, height: 14, color: "#9CA3AF" }} />
                   </div>
-                  <span className="text-sm font-semibold text-brand-dark">{q.quotation_number}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{q.quotation_number}</span>
                 </Link>
-                <Link href={`/quotations/${q.id}`} className="text-sm text-brand-dark truncate hidden lg:block">{(q.customers as any)?.name ?? "—"}</Link>
-                <Link href={`/quotations/${q.id}`} className="text-sm text-brand-muted hidden lg:block">{formatDate(q.date)}</Link>
-                <Link href={`/quotations/${q.id}`} className="text-sm font-semibold text-brand-dark ml-auto lg:ml-0">{formatCurrency(Number(q.grand_total))}</Link>
+                <Link href={`/quotations/${q.id}`} className="hidden lg:block" style={{ fontSize: 13, color: "#374151", textDecoration: "none", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{(q.customers as any)?.name ?? "—"}</Link>
+                <Link href={`/quotations/${q.id}`} className="hidden lg:block" style={{ fontSize: 13, color: "#6B7280", textDecoration: "none" }}>{formatDate(q.date)}</Link>
+                <Link href={`/quotations/${q.id}`} style={{ fontSize: 13, fontWeight: 600, color: "#111827", marginLeft: "auto", textDecoration: "none" }} className="lg:m-0">{formatCurrency(Number(q.grand_total))}</Link>
                 <div className="hidden lg:block"><QuotationStatusBadge status={q.status} /></div>
                 <button
-                  title="View / Download PDF"
+                  title="Download PDF"
                   onClick={() => window.open(`/api/pdf/quotation/${q.id}`, "_blank")}
-                  className="hidden lg:flex h-8 w-8 items-center justify-center rounded-lg text-brand-muted hover:text-[#4F46E5] hover:bg-[#EEF2FF] transition-colors"
+                  className="hidden lg:flex"
+                  style={{ width: 32, height: 32, alignItems: "center", justifyContent: "center", borderRadius: 6, background: "transparent", border: "none", cursor: "pointer", color: "#9CA3AF", transition: "all 0.1s" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#EEF2FF"; (e.currentTarget as HTMLElement).style.color = "#4F46E5"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#9CA3AF"; }}
                 >
-                  <Download className="h-4 w-4" />
+                  <Download style={{ width: 14, height: 14 }} />
                 </button>
               </div>
             ))}
