@@ -25,6 +25,7 @@ export function QuotationDetailContent({ quotation: initial, company, docSetting
   const [quotation, setQuotation] = useState(initial);
   const [converting, setConverting] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const router = useRouter();
 
   async function updateStatus(status: QuotationStatus) {
@@ -90,16 +91,33 @@ export function QuotationDetailContent({ quotation: initial, company, docSetting
 
   const customer = quotation.customers as any;
 
-  function openWhatsApp() {
+  async function openWhatsApp() {
     const phone = customer?.phone;
     if (!phone) return;
-    // Strip non-digits, prepend 91 (India) if not already an international number
     const digits = phone.replace(/\D/g, "");
     const wa = digits.startsWith("91") && digits.length >= 12 ? digits : `91${digits}`;
-    const msg = encodeURIComponent(
-      `Hi ${customer?.name ?? ""},\n\nPlease find your quotation *${quotation.quotation_number}* for *${formatCurrency(Number(quotation.grand_total))}* from ${company?.company_name ?? "Shreedhar Sales"}.\n\nValid until: ${formatDate(quotation.valid_until)}\n\nThank you!`
-    );
-    window.open(`https://wa.me/${wa}?text=${msg}`, "_blank");
+    const text = `Hi ${customer?.name ?? ""},\n\nPlease find your quotation *${quotation.quotation_number}* for *${formatCurrency(Number(quotation.grand_total))}* from ${company?.company_name ?? "Shreedhar Sales"}.\n\nValid until: ${formatDate(quotation.valid_until)}\n\nThank you!`;
+
+    // Try native share with PDF attachment (works on mobile Chrome/Safari)
+    if (typeof navigator.share === "function") {
+      try {
+        setSharing(true);
+        const res = await fetch(`/api/pdf/quotation/${quotation.id}`);
+        const blob = await res.blob();
+        const file = new File([blob], `Quotation-${quotation.quotation_number}.pdf`, { type: "application/pdf" });
+        if (navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ files: [file], title: `Quotation ${quotation.quotation_number}`, text });
+          return;
+        }
+      } catch {
+        // user cancelled or share unsupported — fall through
+      } finally {
+        setSharing(false);
+      }
+    }
+
+    // Fallback: open WhatsApp with text message only
+    window.open(`https://wa.me/${wa}?text=${encodeURIComponent(text)}`, "_blank");
   }
 
   return (
@@ -130,6 +148,7 @@ export function QuotationDetailContent({ quotation: initial, company, docSetting
               variant="outline"
               size="md"
               onClick={openWhatsApp}
+              loading={sharing}
               className="border-green-300 text-green-700 hover:bg-green-50"
             >
               <MessageCircle className="h-4 w-4" />WhatsApp
