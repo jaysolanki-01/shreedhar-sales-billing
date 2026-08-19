@@ -40,8 +40,8 @@
   --color-status-overdue-bg: #FEF2F2;
   --color-status-overdue-text: #991B1B;
 
-  /* Font — Helvetica Neue system stack */
-  --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* Font — Lexend */
+  --font-sans: var(--font-lexend), 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   /* Radius */
   --radius-sm: 6px;
