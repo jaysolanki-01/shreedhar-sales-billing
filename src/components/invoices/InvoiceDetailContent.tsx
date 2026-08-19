@@ -167,7 +167,7 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
               <img
                 src="/logo.png"
                 alt="Logo"
-                className="h-12 w-12 object-contain flex-shrink-0"
+                className="h-16 w-16 object-contain flex-shrink-0"
                 onError={(e) => { e.currentTarget.style.display = "none"; }}
               />
               <div>
@@ -198,14 +198,22 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
 
         <div className="px-4 sm:px-8 py-6 space-y-6">
 
-          {/* Bill To */}
-          <div>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Bill To</p>
-            <p className="font-semibold text-gray-900">{customer?.name}</p>
-            {customer?.company_name && <p className="text-sm text-gray-600">{customer.company_name}</p>}
-            {customer?.address && <p className="text-sm text-gray-500">{customer.address}</p>}
-            {customer?.phone && <p className="text-sm text-gray-500">{customer.phone}</p>}
-            {customer?.gstin && <p className="text-sm text-gray-500">GSTIN: {customer.gstin}</p>}
+          {/* Bill To / From */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Bill To</p>
+              <p className="font-semibold text-gray-900">{customer?.name}</p>
+              {customer?.company_name && <p className="text-sm text-gray-600">{customer.company_name}</p>}
+              {customer?.address && <p className="text-sm text-gray-500">{customer.address}</p>}
+              {customer?.phone && <p className="text-sm text-gray-500">{customer.phone}</p>}
+              {customer?.gstin && <p className="text-sm text-gray-500">GSTIN: {customer.gstin}</p>}
+            </div>
+            <div className="sm:text-right">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">From</p>
+              <p className="text-sm font-semibold text-gray-900">Shreedhar Patel</p>
+              <p className="text-sm font-semibold text-gray-900">Pallav Patel</p>
+              <p className="text-sm text-gray-500">{company?.company_name ?? "Shreedhar Sales"}</p>
+            </div>
           </div>
 
           {/* Items */}
