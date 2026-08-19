@@ -34,11 +34,10 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
   const [payRef, setPayRef] = useState("");
   const [payNotes, setPayNotes] = useState("");
   const [paying, setPaying] = useState(false);
-  const [sharing, setSharing] = useState(false);
   const router = useRouter();
   const customer = invoice.customers as any;
 
-  async function openWhatsApp() {
+  function openWhatsApp() {
     const phone = customer?.phone;
     if (!phone) return;
     const digits = phone.replace(/\D/g, "");
@@ -46,27 +45,8 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
     const balanceLine = Number(invoice.balance_due) > 0
       ? `\n\nBalance Due: *${formatCurrency(Number(invoice.balance_due))}*`
       : "\n\n✅ *Fully Paid — Thank you!*";
-    const text = `Hi ${customer?.name ?? ""},\n\nPlease find your invoice *${invoice.invoice_number}* for *${formatCurrency(Number(invoice.grand_total))}* from ${company?.company_name ?? "Shreedhar Sales"}.${balanceLine}\n\nThank you!`;
-
-    // Try native share with PDF attachment (works on mobile Chrome/Safari)
-    if (typeof navigator.share === "function") {
-      try {
-        setSharing(true);
-        const res = await fetch(`/api/pdf/invoice/${invoice.id}`);
-        const blob = await res.blob();
-        const file = new File([blob], `Invoice-${invoice.invoice_number}.pdf`, { type: "application/pdf" });
-        if (navigator.canShare?.({ files: [file] })) {
-          await navigator.share({ files: [file], title: `Invoice ${invoice.invoice_number}`, text });
-          return;
-        }
-      } catch {
-        // user cancelled or share unsupported — fall through
-      } finally {
-        setSharing(false);
-      }
-    }
-
-    // Fallback: open WhatsApp with text message only
+    const pdfLink = `${window.location.origin}/api/pdf/invoice/${invoice.id}`;
+    const text = `Hi ${customer?.name ?? ""},\n\nPlease find your invoice *${invoice.invoice_number}* for *${formatCurrency(Number(invoice.grand_total))}* from ${company?.company_name ?? "Shreedhar Sales"}.${balanceLine}\n\n📄 Download PDF: ${pdfLink}\n\nThank you!`;
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(text)}`, "_blank");
   }
 
@@ -127,7 +107,6 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
               variant="outline"
               size="md"
               onClick={openWhatsApp}
-              loading={sharing}
               className="border-green-300 text-green-700 hover:bg-green-50"
             >
               <MessageCircle className="h-4 w-4" />WhatsApp

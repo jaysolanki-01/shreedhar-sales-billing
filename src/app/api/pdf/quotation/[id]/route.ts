@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getOwnerId } from "@/lib/owner";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { QuotationPDF } from "@/components/documents/QuotationPDF";
 import React from "react";
@@ -13,15 +12,20 @@ export async function GET(
 ) {
   const { id } = await params;
   const supabase = createAdminClient();
-  const userId = await getOwnerId();
 
-  const [{ data: quotation }, { data: company }, { data: docSettings }] = await Promise.all([
-    supabase.from("quotations").select("*, customers(*), quotation_items(*)").eq("id", id).eq("user_id", userId).single(),
-    supabase.from("company_settings").select("*").eq("user_id", userId).single(),
-    supabase.from("doc_settings").select("*").eq("user_id", userId).single(),
-  ]);
+  // Fetch quotation by UUID — publicly accessible (UUID is unguessable)
+  const { data: quotation } = await supabase
+    .from("quotations")
+    .select("*, customers(*), quotation_items(*)")
+    .eq("id", id)
+    .single();
 
   if (!quotation) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  const [{ data: company }, { data: docSettings }] = await Promise.all([
+    supabase.from("company_settings").select("*").eq("user_id", quotation.user_id).single(),
+    supabase.from("doc_settings").select("*").eq("user_id", quotation.user_id).single(),
+  ]);
 
   if (quotation.quotation_items) {
     quotation.quotation_items.sort((a: any, b: any) => a.sort_order - b.sort_order);
