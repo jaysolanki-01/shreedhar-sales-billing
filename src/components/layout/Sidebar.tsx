@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, FileText, Receipt, Users,
-  CreditCard, BarChart2, Settings, X, LogOut,
+  CreditCard, BarChart2, Settings, X, LogOut, ShieldCheck,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,7 @@ const navItems = [
   { label: "Payments",   href: "/payments",    icon: CreditCard },
   { label: "Reports",    href: "/reports",     icon: BarChart2 },
   { label: "Settings",   href: "/settings",    icon: Settings },
+  { label: "Admin",      href: "/admin",       icon: ShieldCheck },
 ];
 
 interface SidebarProps {
