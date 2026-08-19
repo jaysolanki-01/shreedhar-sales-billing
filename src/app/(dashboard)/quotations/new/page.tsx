@@ -1,10 +1,12 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+﻿import { createAdminClient } from "@/lib/supabase/admin";
 import { getOwnerId } from "@/lib/owner";
 import { Header } from "@/components/layout/Header";
 import { QuotationForm } from "@/components/quotations/QuotationForm";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+
+export const dynamic = 'force-dynamic';
 
 export default async function NewQuotationPage({
   searchParams,
@@ -39,3 +41,4 @@ export default async function NewQuotationPage({
     </div>
   );
 }
+

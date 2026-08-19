@@ -1,10 +1,12 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+﻿import { createAdminClient } from "@/lib/supabase/admin";
 import { getOwnerId } from "@/lib/owner";
 import { Header } from "@/components/layout/Header";
 import { InvoiceForm } from "@/components/invoices/InvoiceForm";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+
+export const dynamic = 'force-dynamic';
 
 export default async function NewInvoicePage({ searchParams }: { searchParams: Promise<{ customer?: string }> }) {
   const { customer } = await searchParams;
@@ -35,3 +37,4 @@ export default async function NewInvoicePage({ searchParams }: { searchParams: P
     </div>
   );
 }
+

@@ -1,10 +1,12 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+﻿import { createAdminClient } from "@/lib/supabase/admin";
 import { getOwnerId } from "@/lib/owner";
 import { Header } from "@/components/layout/Header";
 import { QuotationsContent } from "@/components/quotations/QuotationsContent";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+
+export const dynamic = 'force-dynamic';
 
 export default async function QuotationsPage() {
   const supabase = createAdminClient();
@@ -31,3 +33,4 @@ export default async function QuotationsPage() {
     </div>
   );
 }
+

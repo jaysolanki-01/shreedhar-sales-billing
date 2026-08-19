@@ -1,6 +1,8 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getOwnerId } from "@/lib/owner";
 import { notFound } from "next/navigation";
+
+export const dynamic = 'force-dynamic';
 import { Header } from "@/components/layout/Header";
 import { InvoiceDetailContent } from "@/components/invoices/InvoiceDetailContent";
 

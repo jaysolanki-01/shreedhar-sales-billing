@@ -1,7 +1,9 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+﻿import { createAdminClient } from "@/lib/supabase/admin";
 import { getOwnerId } from "@/lib/owner";
 import { Header } from "@/components/layout/Header";
 import { ReportsContent } from "@/components/reports/ReportsContent";
+
+export const dynamic = 'force-dynamic';
 
 export default async function ReportsPage() {
   const supabase = createAdminClient();
@@ -20,3 +22,4 @@ export default async function ReportsPage() {
     </div>
   );
 }
+
