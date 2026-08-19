@@ -34,6 +34,7 @@ export function CustomersContent() {
   );
 
   async function handleSave(data: Omit<Customer, "id" | "user_id" | "created_at" | "updated_at">) {
+    if (!userId) { toast.error("Not ready yet, please try again"); return; }
     const supabase = createClient();
     if (editCustomer) {
       const { data: updated, error } = await supabase
