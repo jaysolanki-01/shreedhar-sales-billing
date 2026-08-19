@@ -25,12 +25,15 @@ interface Props {
   existingInvoice?: Invoice & { invoice_items: InvoiceItem[] };
 }
 
+const PREPARERS = ["Shreedhar Patel", "Pallav Patel"] as const;
+
 interface FormValues {
   customer_id: string;
   date: string;
   due_date: string;
   notes: string;
   terms: string;
+  prepared_by: string;
   items: Array<{
     id?: string;
     description: string;
@@ -57,6 +60,7 @@ export function InvoiceForm({ customers: initialCustomers, defaultSettings, user
       due_date: existingInvoice.due_date ?? "",
       notes: existingInvoice.notes,
       terms: existingInvoice.terms,
+      prepared_by: existingInvoice.prepared_by ?? "",
       items: existingInvoice.invoice_items.map((item) => ({
         id: item.id,
         description: item.description,
@@ -71,12 +75,14 @@ export function InvoiceForm({ customers: initialCustomers, defaultSettings, user
       due_date: format(addDays(new Date(), paymentDays), "yyyy-MM-dd"),
       notes: "",
       terms: defaultSettings?.inv_terms ?? "",
+      prepared_by: "",
       items: [{ description: "", quantity: "1", rate: "", discount_percent: "0", gst_percent: String(defaultSettings?.default_gst_percent ?? 18) }],
     },
   });
 
   const watchedItems = watch("items");
   const watchedCustomerId = watch("customer_id");
+  const watchedPreparedBy = watch("prepared_by");
   const { totals } = computeItemsAndTotals(watchedItems ?? []);
   const selectedCustomer = customers.find((c) => c.id === watchedCustomerId);
   const isValid = watchedCustomerId && watchedItems?.some((i) => i.description || i.rate);
@@ -94,6 +100,7 @@ export function InvoiceForm({ customers: initialCustomers, defaultSettings, user
           due_date: formData.due_date || null,
           notes: formData.notes,
           terms: formData.terms,
+          prepared_by: formData.prepared_by || null,
         }).eq("id", existingInvoice.id);
 
         await supabase.from("invoice_items").delete().eq("invoice_id", existingInvoice.id);
@@ -122,6 +129,7 @@ export function InvoiceForm({ customers: initialCustomers, defaultSettings, user
           due_date: formData.due_date || null,
           notes: formData.notes,
           terms: formData.terms,
+          prepared_by: formData.prepared_by || null,
         }).select().single();
         if (invErr) throw invErr;
 
@@ -193,6 +201,25 @@ export function InvoiceForm({ customers: initialCustomers, defaultSettings, user
               <div className="grid grid-cols-2 gap-4">
                 <Input label="Invoice Date" type="date" {...register("date")} />
                 <Input label="Due Date" type="date" {...register("due_date")} />
+              </div>
+              <div className="mt-4">
+                <p className="text-xs font-medium text-brand-muted mb-2">Prepared by</p>
+                <div className="flex gap-2">
+                  {PREPARERS.map((name) => (
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={() => setValue("prepared_by", watchedPreparedBy === name ? "" : name)}
+                      className={`flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-all ${
+                        watchedPreparedBy === name
+                          ? "bg-brand-dark text-white border-brand-dark"
+                          : "bg-surface text-brand-muted border-brand-border hover:border-brand-brown hover:text-brand-dark"
+                      }`}
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 

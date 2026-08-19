@@ -25,12 +25,15 @@ interface Props {
   existingQuotation?: Quotation & { quotation_items: QuotationItem[] };
 }
 
+const PREPARERS = ["Shreedhar Patel", "Pallav Patel"] as const;
+
 interface FormValues {
   customer_id: string;
   date: string;
   valid_until: string;
   notes: string;
   terms: string;
+  prepared_by: string;
   items: Array<{
     id?: string;
     description: string;
@@ -58,6 +61,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
       valid_until: existingQuotation.valid_until,
       notes: existingQuotation.notes,
       terms: existingQuotation.terms,
+      prepared_by: existingQuotation.prepared_by ?? "",
       items: existingQuotation.quotation_items.map((item) => ({
         id: item.id,
         description: item.description,
@@ -72,12 +76,14 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
       valid_until: format(addDays(new Date(), validDays), "yyyy-MM-dd"),
       notes: "",
       terms: defaultSettings?.qtn_terms ?? "",
+      prepared_by: "",
       items: [{ description: "", quantity: "1", rate: "", discount_percent: "0", gst_percent: String(defaultSettings?.default_gst_percent ?? 18) }],
     },
   });
 
   const watchedItems = watch("items");
   const watchedCustomerId = watch("customer_id");
+  const watchedPreparedBy = watch("prepared_by");
 
   const { items: computedItems, totals } = computeItemsAndTotals(watchedItems ?? []);
 
@@ -98,6 +104,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
             valid_until: formData.valid_until,
             notes: formData.notes,
             terms: formData.terms,
+            prepared_by: formData.prepared_by || null,
           })
           .eq("id", existingQuotation.id);
         if (qErr) throw qErr;
@@ -134,6 +141,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
             valid_until: formData.valid_until,
             notes: formData.notes,
             terms: formData.terms,
+            prepared_by: formData.prepared_by || null,
           })
           .select()
           .single();
@@ -226,6 +234,25 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
               <div className="grid grid-cols-2 gap-4">
                 <Input label="Date" type="date" {...register("date")} />
                 <Input label="Valid Until" type="date" {...register("valid_until")} />
+              </div>
+              <div className="mt-4">
+                <p className="text-xs font-medium text-brand-muted mb-2">Prepared by</p>
+                <div className="flex gap-2">
+                  {PREPARERS.map((name) => (
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={() => setValue("prepared_by", watchedPreparedBy === name ? "" : name)}
+                      className={`flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-all ${
+                        watchedPreparedBy === name
+                          ? "bg-brand-dark text-white border-brand-dark"
+                          : "bg-surface text-brand-muted border-brand-border hover:border-brand-brown hover:text-brand-dark"
+                      }`}
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 

@@ -208,12 +208,13 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
               {customer?.phone && <p className="text-sm text-gray-500">{customer.phone}</p>}
               {customer?.gstin && <p className="text-sm text-gray-500">GSTIN: {customer.gstin}</p>}
             </div>
-            <div className="sm:text-right">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">From</p>
-              <p className="text-sm font-semibold text-gray-900">Shreedhar Patel</p>
-              <p className="text-sm font-semibold text-gray-900">Pallav Patel</p>
-              <p className="text-sm text-gray-500">{company?.company_name ?? "Shreedhar Sales"}</p>
-            </div>
+            {invoice.prepared_by && (
+              <div className="sm:text-right">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">From</p>
+                <p className="text-sm font-semibold text-gray-900">{invoice.prepared_by}</p>
+                <p className="text-sm text-gray-500">{company?.company_name ?? "Shreedhar Sales"}</p>
+              </div>
+            )}
           </div>
 
           {/* Items */}

@@ -83,6 +83,7 @@ export interface Quotation {
   grand_total: number;
   notes: string;
   terms: string;
+  prepared_by: string | null;
   created_at: string;
   updated_at: string;
   customers?: Customer;
@@ -123,6 +124,7 @@ export interface Invoice {
   balance_due: number;
   notes: string;
   terms: string;
+  prepared_by: string | null;
   created_at: string;
   updated_at: string;
   customers?: Customer;
