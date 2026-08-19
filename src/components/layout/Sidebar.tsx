@@ -32,15 +32,15 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   }
 
   const content = (
-    <div className="flex flex-col h-full bg-white" style={{ borderRight: "1px solid #E0E7FF" }}>
+    <div className="flex flex-col h-full" style={{ background: "#FFFFFF", borderRight: "1px solid #E5E9F5" }}>
 
       {/* Logo */}
-      <div className="px-4 pt-5 pb-4">
+      <div className="px-5 pt-6 pb-5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <div
               className="flex-shrink-0 rounded-xl overflow-hidden"
-              style={{ width: 40, height: 40, background: "#EEF2FF", border: "1px solid #C7D2FE" }}
+              style={{ width: 38, height: 38, background: "#EEF2FF", border: "1px solid #C7D2FE" }}
             >
               <img
                 src="/logo.png"
@@ -50,17 +50,17 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                   const t = e.currentTarget;
                   t.style.display = "none";
                   const p = t.parentElement;
-                  if (p) p.innerHTML = '<span style="display:flex;align-items:center;justify-content:center;height:100%;font-weight:700;font-size:14px;color:#4F46E5;">SS</span>';
+                  if (p) p.innerHTML = '<span style="display:flex;align-items:center;justify-content:center;height:100%;font-weight:700;font-size:13px;color:#4F46E5;letter-spacing:-0.02em;">SS</span>';
                 }}
               />
             </div>
             <div>
-              <p style={{ fontSize: 13.5, fontWeight: 600, color: "#1E1B4B", lineHeight: 1.2 }}>Shreedhar</p>
-              <p style={{ fontSize: 10.5, fontWeight: 500, color: "#818CF8", letterSpacing: "0.04em", lineHeight: 1.3 }}>Sales & Co.</p>
+              <p style={{ fontSize: 13, fontWeight: 700, color: "#1A1740", lineHeight: 1.2, letterSpacing: "-0.02em" }}>Shreedhar</p>
+              <p style={{ fontSize: 10, fontWeight: 500, color: "#818CF8", letterSpacing: "0.06em", lineHeight: 1.4, textTransform: "uppercase" }}>Sales & Co.</p>
             </div>
           </div>
           {onMobileClose && (
-            <button onClick={onMobileClose} style={{ color: "#9CA3AF" }} className="lg:hidden hover:text-gray-600 transition-colors">
+            <button onClick={onMobileClose} style={{ color: "#9CA3AF" }} className="lg:hidden p-1 rounded-md hover:bg-gray-100 transition-colors">
               <X className="h-4 w-4" />
             </button>
           )}
@@ -68,10 +68,13 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       </div>
 
       {/* Divider */}
-      <div style={{ height: 1, background: "#EEF2FF", margin: "0 16px 4px" }} />
+      <div style={{ height: 1, background: "#F0F2FA", margin: "0 16px 6px" }} />
+
+      {/* Nav label */}
+      <p style={{ fontSize: 10, fontWeight: 600, color: "#9CA3AF", letterSpacing: "0.08em", textTransform: "uppercase", padding: "4px 20px 8px" }}>Menu</p>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
         {navItems.map(({ label, href, icon: Icon }) => {
           const active = isActive(href);
           return (
@@ -79,29 +82,30 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
               key={href}
               href={href}
               onClick={onMobileClose}
-              className={cn("flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-150")}
+              className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150")}
               style={{
                 fontSize: 13,
                 fontWeight: active ? 600 : 500,
+                letterSpacing: active ? "-0.01em" : "0",
                 background: active ? "#EEF2FF" : "transparent",
-                color: active ? "#4F46E5" : "#6B7280",
+                color: active ? "#4338CA" : "#6B7280",
               }}
-              onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "#F5F3FF"; }}
+              onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "#F7F8FD"; }}
               onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
             >
-              <Icon
-                style={{
-                  width: 15, height: 15, flexShrink: 0,
-                  color: active ? "#4F46E5" : "#9CA3AF",
-                }}
-              />
+              <div style={{
+                width: 30, height: 30, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                background: active ? "#DBEAFE" : "transparent",
+              }}>
+                <Icon style={{ width: 14, height: 14, color: active ? "#4338CA" : "#9CA3AF" }} />
+              </div>
               {label}
             </Link>
           );
         })}
       </nav>
 
-      <div className="pb-4" />
+      <div className="pb-5" />
     </div>
   );
 
@@ -113,7 +117,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onMobileClose} />
-          <aside className="absolute left-0 top-0 h-full w-56 flex flex-col shadow-xl">
+          <aside className="absolute left-0 top-0 h-full w-56 flex flex-col shadow-2xl">
             {content}
           </aside>
         </div>

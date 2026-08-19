@@ -2,20 +2,20 @@
 
 @theme {
   /* Indigo Modern — brand palette */
-  --color-brand-dark: #1E1B4B;
+  --color-brand-dark: #1A1740;
   --color-brand-brown: #4F46E5;
   --color-brand-copper: #4338CA;
-  --color-brand-gold: #7C3AED;
+  --color-brand-gold: #6D28D9;
   --color-brand-beige: #EEF2FF;
   --color-brand-beige-dark: #E0E7FF;
   --color-brand-white: #FFFFFF;
 
   /* Semantic tokens */
-  --color-background: #F5F3FF;
+  --color-background: #F4F6FB;
   --color-surface: #FFFFFF;
-  --color-border: #E0E7FF;
+  --color-border: #E5E9F5;
   --color-border-strong: #C7D2FE;
-  --color-text-primary: #1E1B4B;
+  --color-text-primary: #1A1740;
   --color-text-secondary: #3730A3;
   --color-text-muted: #6B7280;
   --color-text-placeholder: #9CA3AF;
@@ -40,8 +40,8 @@
   --color-status-overdue-bg: #FEF2F2;
   --color-status-overdue-text: #991B1B;
 
-  /* Font */
-  --font-sans: var(--font-poppins, ui-sans-serif, system-ui);
+  /* Font — Helvetica Neue system stack */
+  --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   /* Radius */
   --radius-sm: 6px;
@@ -49,22 +49,30 @@
   --radius-lg: 12px;
   --radius-xl: 16px;
 
-  /* Shadows */
-  --shadow-card: 0 1px 3px rgba(79, 70, 229, 0.06), 0 1px 2px rgba(79, 70, 229, 0.04);
-  --shadow-dropdown: 0 8px 24px -4px rgba(79, 70, 229, 0.12), 0 2px 6px -2px rgba(79, 70, 229, 0.06);
-  --shadow-modal: 0 20px 60px -12px rgba(79, 70, 229, 0.18);
+  /* Shadows — refined, crisper */
+  --shadow-card: 0 1px 4px rgba(30, 27, 75, 0.07), 0 1px 2px rgba(30, 27, 75, 0.04);
+  --shadow-dropdown: 0 8px 28px -4px rgba(30, 27, 75, 0.14), 0 2px 8px -2px rgba(30, 27, 75, 0.06);
+  --shadow-modal: 0 24px 64px -12px rgba(30, 27, 75, 0.22);
 }
 
 * { box-sizing: border-box; }
 html { height: 100%; }
 
 body {
-  background-color: #F5F3FF;
-  color: #1E1B4B;
+  background-color: #F4F6FB;
+  color: #1A1740;
   font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
   min-height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 {
+  letter-spacing: -0.02em;
+  font-weight: 600;
 }
 
 ::-webkit-scrollbar { width: 5px; height: 5px; }
