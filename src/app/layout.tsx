@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import { Toaster } from "sonner";
+import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 
 const lexend = Lexend({
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${lexend.variable} h-full`}>
       <body className="h-full antialiased">
+        <NextTopLoader color="#4F46E5" height={2} showSpinner={false} />
         {children}
         <Toaster
           position="top-right"
