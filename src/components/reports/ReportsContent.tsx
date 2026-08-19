@@ -55,7 +55,8 @@ export function ReportsContent({ invoices }: { invoices: any[] }) {
   return (
     <div className="px-4 lg:px-8 py-6 max-w-5xl mx-auto w-full space-y-6">
       {/* Period filter */}
-      <div className="flex gap-1 bg-brand-beige rounded-lg p-1 w-fit">
+      <div className="overflow-x-auto">
+      <div className="flex gap-1 bg-brand-beige rounded-lg p-1 w-fit min-w-max">
         {PERIODS.map((p) => (
           <button
             key={p.value}
@@ -67,6 +68,7 @@ export function ReportsContent({ invoices }: { invoices: any[] }) {
             {p.label}
           </button>
         ))}
+      </div>
       </div>
 
       {/* Summary stats */}

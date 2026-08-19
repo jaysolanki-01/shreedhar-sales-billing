@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { amountToWords } from "@/lib/number-to-words";
-import { ArrowLeft, Download, Edit2, Plus, CreditCard, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Download, Edit2, Plus, CreditCard, CheckCircle2, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -36,6 +36,20 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
   const [paying, setPaying] = useState(false);
   const router = useRouter();
   const customer = invoice.customers as any;
+
+  function openWhatsApp() {
+    const phone = customer?.phone;
+    if (!phone) return;
+    const digits = phone.replace(/\D/g, "");
+    const wa = digits.startsWith("91") && digits.length >= 12 ? digits : `91${digits}`;
+    const balanceLine = Number(invoice.balance_due) > 0
+      ? `\n\nBalance Due: *${formatCurrency(Number(invoice.balance_due))}*`
+      : "\n\n✅ *Fully Paid — Thank you!*";
+    const msg = encodeURIComponent(
+      `Hi ${customer?.name ?? ""},\n\nPlease find your invoice *${invoice.invoice_number}* for *${formatCurrency(Number(invoice.grand_total))}* from ${company?.company_name ?? "Shreedhar Sales"}.${balanceLine}\n\nThank you!`
+    );
+    window.open(`https://wa.me/${wa}?text=${msg}`, "_blank");
+  }
 
   async function recordPayment() {
     setPaying(true);
@@ -89,6 +103,16 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
           <Link href={`/invoices/${invoice.id}/edit`}>
             <Button variant="outline" size="md"><Edit2 className="h-4 w-4" />Edit</Button>
           </Link>
+          {customer?.phone && (
+            <Button
+              variant="outline"
+              size="md"
+              onClick={openWhatsApp}
+              className="border-green-300 text-green-700 hover:bg-green-50"
+            >
+              <MessageCircle className="h-4 w-4" />WhatsApp
+            </Button>
+          )}
           <Button variant="outline" size="md" onClick={() => window.open(`/api/pdf/invoice/${invoice.id}`, "_blank")}>
             <Download className="h-4 w-4" />PDF
           </Button>
@@ -135,18 +159,18 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
 
       {/* Invoice Document Preview */}
       <div className="bg-surface rounded-xl border border-brand-border shadow-card overflow-hidden">
-        <div className="bg-brand-dark px-8 py-6">
-          <div className="flex justify-between items-start">
+        <div className="bg-[#1A1740] px-4 sm:px-8 py-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between gap-3">
             <div>
-              <div className="w-12 h-12 rounded-lg bg-brand-gold flex items-center justify-center mb-2 overflow-hidden">
+              <div className="w-12 h-12 rounded-lg bg-amber-400 flex items-center justify-center mb-2 overflow-hidden">
                 <img src="/logo.png" alt="SS" className="w-full h-full object-contain" onError={(e) => {
                   e.currentTarget.style.display = "none";
-                  e.currentTarget.parentElement!.innerHTML = '<span class="text-brand-dark font-bold">SS</span>';
+                  e.currentTarget.parentElement!.innerHTML = '<span class="text-[#1A1740] font-bold text-sm">SS</span>';
                 }} />
               </div>
-              <h2 className="text-lg font-bold text-brand-gold">{company?.company_name ?? "Shreedhar Sales"}</h2>
+              <h2 className="text-lg font-bold text-white">{company?.company_name ?? "Shreedhar Sales"}</h2>
             </div>
-            <div className="text-right text-xs text-white/60 space-y-0.5">
+            <div className="text-xs text-white/60 space-y-0.5 sm:text-right">
               {company?.address && <p>{company.address}</p>}
               {company?.phone && <p>{company.phone}</p>}
               {company?.email && <p>{company.email}</p>}
@@ -155,13 +179,13 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
           </div>
         </div>
 
-        <div className="px-8 py-6 space-y-6">
-          <div className="flex justify-between items-start">
+        <div className="px-4 sm:px-8 py-6 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
             <div>
               <h1 className="text-2xl font-bold text-brand-dark tracking-wide">INVOICE</h1>
               <PaymentStatusBadge status={invoice.payment_status} />
             </div>
-            <div className="text-right text-sm space-y-1">
+            <div className="text-sm space-y-1 sm:text-right">
               <p><span className="text-brand-muted">Invoice No:</span> <span className="font-semibold text-brand-dark">{invoice.invoice_number}</span></p>
               <p><span className="text-brand-muted">Date:</span> <span className="text-brand-dark">{formatDate(invoice.date)}</span></p>
               {invoice.due_date && <p><span className="text-brand-muted">Due:</span> <span className="text-brand-dark">{formatDate(invoice.due_date)}</span></p>}
@@ -179,25 +203,47 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
           </div>
 
           <div className="border border-brand-border rounded-lg overflow-hidden">
-            <div className="grid grid-cols-[3fr_1fr_1.5fr_1fr_1fr_1.5fr] bg-brand-dark text-brand-gold text-xs font-semibold uppercase tracking-wide">
-              <div className="px-4 py-3">Description</div>
-              <div className="px-3 py-3 text-right">Qty</div>
-              <div className="px-3 py-3 text-right">Rate</div>
-              <div className="px-3 py-3 text-right">Disc %</div>
-              <div className="px-3 py-3 text-right">GST %</div>
-              <div className="px-4 py-3 text-right">Amount</div>
+            {/* Mobile: card per item */}
+            <div className="sm:hidden">
+              <div className="bg-[#1A1740] px-4 py-2.5 text-xs font-semibold text-amber-300 uppercase tracking-wide">Items</div>
+              <div className="divide-y divide-brand-border">
+                {invoice.invoice_items.map((item: any) => (
+                  <div key={item.id} className="px-4 py-3">
+                    <div className="flex justify-between items-start gap-3">
+                      <p className="text-sm font-medium text-brand-dark flex-1">{item.description}</p>
+                      <p className="text-sm font-bold text-brand-dark whitespace-nowrap">{formatCurrency(Number(item.amount))}</p>
+                    </div>
+                    <p className="text-xs text-brand-muted mt-0.5">
+                      {item.quantity} × {formatCurrency(Number(item.rate))}
+                      {Number(item.gst_percent) > 0 ? ` · GST ${item.gst_percent}%` : ""}
+                      {Number(item.discount_percent) > 0 ? ` · Disc ${item.discount_percent}%` : ""}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="divide-y divide-brand-border">
-              {invoice.invoice_items.map((item: any) => (
-                <div key={item.id} className="grid grid-cols-[3fr_1fr_1.5fr_1fr_1fr_1.5fr] items-center">
-                  <div className="px-4 py-3 text-sm text-brand-dark">{item.description}</div>
-                  <div className="px-3 py-3 text-right text-sm text-brand-dark">{item.quantity}</div>
-                  <div className="px-3 py-3 text-right text-sm text-brand-dark">{formatCurrency(Number(item.rate))}</div>
-                  <div className="px-3 py-3 text-right text-sm text-brand-muted">{item.discount_percent}%</div>
-                  <div className="px-3 py-3 text-right text-sm text-brand-muted">{item.gst_percent}%</div>
-                  <div className="px-4 py-3 text-right text-sm font-semibold text-brand-dark">{formatCurrency(Number(item.amount))}</div>
-                </div>
-              ))}
+            {/* Desktop: full table */}
+            <div className="hidden sm:block">
+              <div className="grid grid-cols-[3fr_1fr_1.5fr_1fr_1fr_1.5fr] bg-[#1A1740] text-amber-300 text-xs font-semibold uppercase tracking-wide">
+                <div className="px-4 py-3">Description</div>
+                <div className="px-3 py-3 text-right">Qty</div>
+                <div className="px-3 py-3 text-right">Rate</div>
+                <div className="px-3 py-3 text-right">Disc %</div>
+                <div className="px-3 py-3 text-right">GST %</div>
+                <div className="px-4 py-3 text-right">Amount</div>
+              </div>
+              <div className="divide-y divide-brand-border">
+                {invoice.invoice_items.map((item: any) => (
+                  <div key={item.id} className="grid grid-cols-[3fr_1fr_1.5fr_1fr_1fr_1.5fr] items-center">
+                    <div className="px-4 py-3 text-sm text-brand-dark">{item.description}</div>
+                    <div className="px-3 py-3 text-right text-sm text-brand-dark">{item.quantity}</div>
+                    <div className="px-3 py-3 text-right text-sm text-brand-dark">{formatCurrency(Number(item.rate))}</div>
+                    <div className="px-3 py-3 text-right text-sm text-brand-muted">{item.discount_percent}%</div>
+                    <div className="px-3 py-3 text-right text-sm text-brand-muted">{item.gst_percent}%</div>
+                    <div className="px-4 py-3 text-right text-sm font-semibold text-brand-dark">{formatCurrency(Number(item.amount))}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
