@@ -30,16 +30,17 @@ interface DashboardContentProps {
   userId: string;
 }
 
-type PeriodKey = "today" | "this_week" | "this_month" | "last_month";
+type PeriodKey = "today" | "this_week" | "this_month" | "last_month" | "custom";
 
 const PERIODS: { label: string; value: PeriodKey }[] = [
   { label: "Today", value: "today" },
   { label: "This Week", value: "this_week" },
   { label: "This Month", value: "this_month" },
   { label: "Last Month", value: "last_month" },
+  { label: "Custom", value: "custom" },
 ];
 
-function getPeriodDates(period: PeriodKey) {
+function getPeriodDates(period: Exclude<PeriodKey, "custom">) {
   const now = new Date();
   switch (period) {
     case "today":
@@ -60,6 +61,8 @@ function getPeriodDates(period: PeriodKey) {
 
 export function DashboardContent({ stats, userId }: DashboardContentProps) {
   const [period, setPeriod] = useState<PeriodKey>("this_month");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [weeks, setWeeks] = useState<WeekSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,13 +73,21 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
   const hour = now.getHours();
   const greeting = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
 
-  useEffect(() => { fetchPeriodData(); }, [period]);
+  useEffect(() => {
+    if (period === "custom") {
+      if (customFrom && customTo && customFrom <= customTo) fetchPeriodData();
+    } else {
+      fetchPeriodData();
+    }
+  }, [period, customFrom, customTo]);
 
   async function fetchPeriodData() {
     setLoading(true);
     setSelectedWeek(null);
     const supabase = createClient();
-    const { from, to } = getPeriodDates(period);
+    const { from, to } = period === "custom"
+      ? { from: customFrom, to: customTo }
+      : getPeriodDates(period as Exclude<PeriodKey, "custom">);
 
     const { data } = await supabase
       .from("invoices")
@@ -88,10 +99,9 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
 
     setInvoices((data as Invoice[]) ?? []);
 
-    if (period === "this_month" || period === "last_month") {
-      const base = period === "this_month" ? now : subMonths(now, 1);
-      const monthStart = startOfMonth(base);
-      const monthEnd = endOfMonth(base);
+    if (period === "this_month" || period === "last_month" || period === "custom") {
+      const monthStart = period === "custom" ? new Date(from) : startOfMonth(period === "this_month" ? now : subMonths(now, 1));
+      const monthEnd = period === "custom" ? new Date(to) : endOfMonth(period === "this_month" ? now : subMonths(now, 1));
       const weekSummaries: WeekSummary[] = [];
       let weekStart = startOfWeek(monthStart, { weekStartsOn: 1 });
       let weekNum = 1;
@@ -161,32 +171,75 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
       <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #E5E7EB", overflow: "hidden" }}>
 
         {/* Header row */}
-        <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, borderBottom: "1px solid #E5E7EB" }}>
-          <p style={{ fontSize: 14, fontWeight: 600, color: "#111827", letterSpacing: "-0.01em" }}>Invoice Activity</p>
-          {/* Period tabs */}
-          <div style={{ display: "flex", gap: 2, background: "#F3F4F6", borderRadius: 8, padding: 3, overflowX: "auto", scrollbarWidth: "none" as any }}>
-            {PERIODS.map(p => (
-              <button
-                key={p.value}
-                onClick={() => setPeriod(p.value)}
-                style={{
-                  padding: "5px 10px",
-                  borderRadius: 8,
-                  fontSize: 11.5,
-                  fontWeight: 600,
-                  whiteSpace: "nowrap" as any,
-                  border: "none",
-                  cursor: "pointer",
-                  transition: "all 0.15s",
-                  background: period === p.value ? "#111827" : "transparent",
-                  color: period === p.value ? "#fff" : "#9CA3AF",
-                  boxShadow: "none",
-                }}
-              >
-                {p.label}
-              </button>
-            ))}
+        <div style={{ padding: "14px 20px", borderBottom: "1px solid #E5E7EB" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+            <p style={{ fontSize: 14, fontWeight: 600, color: "#111827", letterSpacing: "-0.01em" }}>Invoice Activity</p>
+            {/* Period tabs */}
+            <div style={{ display: "flex", gap: 2, background: "#F3F4F6", borderRadius: 8, padding: 3, overflowX: "auto", scrollbarWidth: "none" as any }}>
+              {PERIODS.map(p => (
+                <button
+                  key={p.value}
+                  onClick={() => setPeriod(p.value)}
+                  style={{
+                    padding: "5px 10px",
+                    borderRadius: 8,
+                    fontSize: 11.5,
+                    fontWeight: 600,
+                    whiteSpace: "nowrap" as any,
+                    border: "none",
+                    cursor: "pointer",
+                    transition: "all 0.15s",
+                    background: period === p.value ? "#111827" : "transparent",
+                    color: period === p.value ? "#fff" : "#9CA3AF",
+                    boxShadow: "none",
+                  }}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
           </div>
+          {/* Custom date inputs — shown only when Custom is selected */}
+          {period === "custom" && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <label style={{ fontSize: 11, fontWeight: 500, color: "#9CA3AF" }}>From</label>
+                <input
+                  type="date"
+                  value={customFrom}
+                  max={customTo || undefined}
+                  onChange={e => setCustomFrom(e.target.value)}
+                  style={{
+                    height: 32, borderRadius: 6, border: "1px solid #E5E7EB",
+                    padding: "0 8px", fontSize: 12, color: "#111827",
+                    background: "#fff", outline: "none",
+                  }}
+                />
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <label style={{ fontSize: 11, fontWeight: 500, color: "#9CA3AF" }}>To</label>
+                <input
+                  type="date"
+                  value={customTo}
+                  min={customFrom || undefined}
+                  onChange={e => setCustomTo(e.target.value)}
+                  style={{
+                    height: 32, borderRadius: 6, border: "1px solid #E5E7EB",
+                    padding: "0 8px", fontSize: 12, color: "#111827",
+                    background: "#fff", outline: "none",
+                  }}
+                />
+              </div>
+              {customFrom && customTo && (
+                <span style={{ fontSize: 11, color: "#9CA3AF" }}>
+                  {invoices.length} invoice{invoices.length !== 1 ? "s" : ""} found
+                </span>
+              )}
+              {customFrom && customTo && customFrom > customTo && (
+                <span style={{ fontSize: 11, color: "#DC2626" }}>Start date must be before end date</span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Period Stats — 4 pills in a row */}
