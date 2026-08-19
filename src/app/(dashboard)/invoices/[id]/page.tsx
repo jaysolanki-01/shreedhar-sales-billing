@@ -1,18 +1,18 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect, notFound } from "next/navigation";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getOwnerId } from "@/lib/owner";
+import { notFound } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { InvoiceDetailContent } from "@/components/invoices/InvoiceDetailContent";
 
 export default async function InvoiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const supabase = createAdminClient();
+  const userId = await getOwnerId();
 
   const [{ data: invoice }, { data: company }, { data: docSettings }, { data: payments }] = await Promise.all([
-    supabase.from("invoices").select("*, customers(*), invoice_items(*)").eq("id", id).eq("user_id", user.id).single(),
-    supabase.from("company_settings").select("*").eq("user_id", user.id).single(),
-    supabase.from("doc_settings").select("*").eq("user_id", user.id).single(),
+    supabase.from("invoices").select("*, customers(*), invoice_items(*)").eq("id", id).eq("user_id", userId).single(),
+    supabase.from("company_settings").select("*").eq("user_id", userId).single(),
+    supabase.from("doc_settings").select("*").eq("user_id", userId).single(),
     supabase.from("payments").select("*").eq("invoice_id", id).order("payment_date", { ascending: false }),
   ]);
 
@@ -25,7 +25,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
   return (
     <div className="flex flex-col min-h-full">
       <Header title={invoice.invoice_number} subtitle={(invoice.customers as any)?.name ?? ""} />
-      <InvoiceDetailContent invoice={invoice as any} company={company} docSettings={docSettings} payments={payments ?? []} userId={user.id} />
+      <InvoiceDetailContent invoice={invoice as any} company={company} docSettings={docSettings} payments={payments ?? []} userId={userId} />
     </div>
   );
 }

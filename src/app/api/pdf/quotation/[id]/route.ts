@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getOwnerId } from "@/lib/owner";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { QuotationPDF } from "@/components/documents/QuotationPDF";
 import React from "react";
@@ -9,14 +10,13 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const supabase = createAdminClient();
+  const userId = await getOwnerId();
 
   const [{ data: quotation }, { data: company }, { data: docSettings }] = await Promise.all([
-    supabase.from("quotations").select("*, customers(*), quotation_items(*)").eq("id", id).eq("user_id", user.id).single(),
-    supabase.from("company_settings").select("*").eq("user_id", user.id).single(),
-    supabase.from("doc_settings").select("*").eq("user_id", user.id).single(),
+    supabase.from("quotations").select("*, customers(*), quotation_items(*)").eq("id", id).eq("user_id", userId).single(),
+    supabase.from("company_settings").select("*").eq("user_id", userId).single(),
+    supabase.from("doc_settings").select("*").eq("user_id", userId).single(),
   ]);
 
   if (!quotation) return NextResponse.json({ error: "Not found" }, { status: 404 });

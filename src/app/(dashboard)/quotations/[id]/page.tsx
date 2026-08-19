@@ -1,28 +1,22 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect, notFound } from "next/navigation";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getOwnerId } from "@/lib/owner";
+import { notFound } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { QuotationDetailContent } from "@/components/quotations/QuotationDetailContent";
 
 export default async function QuotationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const supabase = createAdminClient();
+  const userId = await getOwnerId();
 
   const [{ data: quotation }, { data: company }, { data: docSettings }] = await Promise.all([
-    supabase
-      .from("quotations")
-      .select("*, customers(*), quotation_items(*)")
-      .eq("id", id)
-      .eq("user_id", user.id)
-      .single(),
-    supabase.from("company_settings").select("*").eq("user_id", user.id).single(),
-    supabase.from("doc_settings").select("*").eq("user_id", user.id).single(),
+    supabase.from("quotations").select("*, customers(*), quotation_items(*)").eq("id", id).eq("user_id", userId).single(),
+    supabase.from("company_settings").select("*").eq("user_id", userId).single(),
+    supabase.from("doc_settings").select("*").eq("user_id", userId).single(),
   ]);
 
   if (!quotation) notFound();
 
-  // Sort items
   if (quotation.quotation_items) {
     quotation.quotation_items.sort((a: any, b: any) => a.sort_order - b.sort_order);
   }
@@ -34,7 +28,7 @@ export default async function QuotationDetailPage({ params }: { params: Promise<
         quotation={quotation}
         company={company}
         docSettings={docSettings}
-        userId={user.id}
+        userId={userId}
       />
     </div>
   );

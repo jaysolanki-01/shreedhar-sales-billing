@@ -1,5 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect, notFound } from "next/navigation";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getOwnerId } from "@/lib/owner";
+import { notFound } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { InvoiceForm } from "@/components/invoices/InvoiceForm";
 import Link from "next/link";
@@ -8,14 +9,13 @@ import { ArrowLeft } from "lucide-react";
 
 export default async function EditInvoicePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const supabase = createAdminClient();
+  const userId = await getOwnerId();
 
   const [{ data: invoice }, { data: customers }, { data: settings }] = await Promise.all([
-    supabase.from("invoices").select("*, invoice_items(*)").eq("id", id).eq("user_id", user.id).single(),
-    supabase.from("customers").select("id, name, company_name, address, gstin").eq("user_id", user.id).order("name"),
-    supabase.from("doc_settings").select("*").eq("user_id", user.id).single(),
+    supabase.from("invoices").select("*, invoice_items(*)").eq("id", id).eq("user_id", userId).single(),
+    supabase.from("customers").select("id, name, company_name, address, gstin").eq("user_id", userId).order("name"),
+    supabase.from("doc_settings").select("*").eq("user_id", userId).single(),
   ]);
 
   if (!invoice) notFound();
@@ -31,7 +31,7 @@ export default async function EditInvoicePage({ params }: { params: Promise<{ id
           </Link>
         }
       />
-      <InvoiceForm customers={customers ?? []} defaultSettings={settings} userId={user.id} existingInvoice={invoice as any} />
+      <InvoiceForm customers={customers ?? []} defaultSettings={settings} userId={userId} existingInvoice={invoice as any} />
     </div>
   );
 }

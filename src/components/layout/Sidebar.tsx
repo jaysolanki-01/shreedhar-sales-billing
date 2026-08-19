@@ -4,11 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, FileText, Receipt, Users,
-  CreditCard, BarChart2, Settings, LogOut, X,
+  CreditCard, BarChart2, Settings, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
 
 const navItems = [
   { label: "Dashboard",  href: "/dashboard",  icon: LayoutDashboard },
@@ -27,14 +25,6 @@ interface SidebarProps {
 
 export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
-
-  async function handleLogout() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
-  }
 
   function isActive(href: string) {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -111,20 +101,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         })}
       </nav>
 
-      {/* Bottom */}
-      <div className="px-3 pb-4 pt-2">
-        <div style={{ height: 1, background: "#EEF2FF", margin: "0 4px 8px" }} />
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg transition-all"
-          style={{ fontSize: 13, fontWeight: 500, color: "#9CA3AF", background: "transparent" }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#F5F3FF"; (e.currentTarget as HTMLElement).style.color = "#6B7280"; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#9CA3AF"; }}
-        >
-          <LogOut style={{ width: 15, height: 15, flexShrink: 0 }} />
-          Sign Out
-        </button>
-      </div>
+      <div className="pb-4" />
     </div>
   );
 

@@ -1,19 +1,19 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getOwnerId } from "@/lib/owner";
 import { Header } from "@/components/layout/Header";
 import { InvoiceForm } from "@/components/invoices/InvoiceForm";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-export default async function NewInvoicePage({ searchParams }: { searchParams: { customer?: string } }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+export default async function NewInvoicePage({ searchParams }: { searchParams: Promise<{ customer?: string }> }) {
+  const { customer } = await searchParams;
+  const supabase = createAdminClient();
+  const userId = await getOwnerId();
 
   const [{ data: customers }, { data: settings }] = await Promise.all([
-    supabase.from("customers").select("id, name, company_name, address, gstin").eq("user_id", user.id).order("name"),
-    supabase.from("doc_settings").select("*").eq("user_id", user.id).single(),
+    supabase.from("customers").select("id, name, company_name, address, gstin").eq("user_id", userId).order("name"),
+    supabase.from("doc_settings").select("*").eq("user_id", userId).single(),
   ]);
 
   return (
@@ -29,8 +29,8 @@ export default async function NewInvoicePage({ searchParams }: { searchParams: {
       <InvoiceForm
         customers={customers ?? []}
         defaultSettings={settings}
-        userId={user.id}
-        preselectedCustomerId={searchParams.customer}
+        userId={userId}
+        preselectedCustomerId={customer}
       />
     </div>
   );
