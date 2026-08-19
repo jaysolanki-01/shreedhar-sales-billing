@@ -124,7 +124,7 @@ export function QuotationsContent() {
             <span>Quotation</span><span>Customer</span><span>Date</span><span>Amount</span><span>Status</span><span></span>
           </div>
 
-          <div style={{ divideColor: "#E5E7EB" }}>
+          <div>
             {filtered.map((q, i) => (
               <div
                 key={q.id}
