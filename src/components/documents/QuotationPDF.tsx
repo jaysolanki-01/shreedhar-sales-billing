@@ -4,6 +4,15 @@ import {
 } from "@react-pdf/renderer";
 import { amountToWords } from "@/lib/number-to-words";
 import { CompanySettings, DocSettings, Quotation } from "@/types";
+import path from "path";
+
+Font.register({
+  family: "Roboto",
+  fonts: [
+    { src: path.join(process.cwd(), "public/fonts/Roboto-Regular.ttf"), fontWeight: 400 },
+    { src: path.join(process.cwd(), "public/fonts/Roboto-Bold.ttf"),    fontWeight: 700 },
+  ],
+});
 
 const C = {
   navy:    "#1E1B4B",
@@ -19,7 +28,7 @@ const C = {
 
 const s = StyleSheet.create({
   page: {
-    fontFamily: "Helvetica",
+    fontFamily: "Roboto",
     backgroundColor: C.white,
     paddingBottom: 48,
     fontSize: 9,
@@ -48,15 +57,15 @@ const s = StyleSheet.create({
     overflow: "hidden",
   },
   logoImg: { width: 44, height: 44, objectFit: "contain" },
-  logoText: { color: C.indigo, fontSize: 16, fontFamily: "Helvetica-Bold" },
-  companyName: { color: C.navy, fontSize: 13, fontFamily: "Helvetica-Bold", marginBottom: 3 },
+  logoText: { color: C.indigo, fontSize: 16, fontFamily: "Roboto", fontWeight: 700 },
+  companyName: { color: C.navy, fontSize: 13, fontFamily: "Roboto", fontWeight: 700, marginBottom: 3 },
   companyLine: { color: C.slate, fontSize: 8, marginBottom: 1.5, lineHeight: 1.4 },
   headerRight: { alignItems: "flex-end" },
   docBadge: {
     backgroundColor: C.indigoL, borderRadius: 4,
     paddingHorizontal: 8, paddingVertical: 3, marginBottom: 8,
   },
-  docBadgeText: { color: C.indigo, fontSize: 8, fontFamily: "Helvetica-Bold", letterSpacing: 1 },
+  docBadgeText: { color: C.indigo, fontSize: 8, fontFamily: "Roboto", fontWeight: 700, letterSpacing: 1 },
 
   // ── Body ──
   body: { paddingHorizontal: 36, paddingTop: 22 },
@@ -64,17 +73,17 @@ const s = StyleSheet.create({
   // ── Meta grid (Quotation No / Date / Valid Until) ──
   metaRow: { flexDirection: "row", marginBottom: 3, justifyContent: "flex-end" },
   metaLabel: { color: C.muted, fontSize: 8, width: 68, textAlign: "right", marginRight: 6 },
-  metaValue: { color: C.navy, fontSize: 8.5, fontFamily: "Helvetica-Bold", textAlign: "right", minWidth: 90 },
+  metaValue: { color: C.navy, fontSize: 8.5, fontFamily: "Roboto", fontWeight: 700, textAlign: "right", minWidth: 90 },
 
   // ── Bill To / From two-col ──
   twoCol: { flexDirection: "row", marginBottom: 20, gap: 20 },
   colBlock: { flex: 1 },
   sectionLabel: {
-    color: C.indigo, fontSize: 7, fontFamily: "Helvetica-Bold",
+    color: C.indigo, fontSize: 7, fontFamily: "Roboto", fontWeight: 700,
     textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6,
     borderBottomWidth: 1, borderBottomColor: C.indigoL, paddingBottom: 4,
   },
-  contactName: { color: C.navy, fontSize: 10, fontFamily: "Helvetica-Bold", marginBottom: 2 },
+  contactName: { color: C.navy, fontSize: 10, fontFamily: "Roboto", fontWeight: 700, marginBottom: 2 },
   contactLine: { color: C.slate, fontSize: 8, marginBottom: 1.5, lineHeight: 1.4 },
 
   // ── Status badge ──
@@ -83,12 +92,12 @@ const s = StyleSheet.create({
     paddingHorizontal: 6, paddingVertical: 2,
     alignSelf: "flex-start", marginTop: 4,
   },
-  statusText: { color: C.slate, fontSize: 7.5, fontFamily: "Helvetica-Bold" },
+  statusText: { color: C.slate, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700 },
 
   // ── Table ──
   tableWrap: { borderRadius: 6, overflow: "hidden", borderWidth: 1, borderColor: C.border, marginBottom: 16 },
   tableHead: { backgroundColor: C.navy, flexDirection: "row", paddingVertical: 9 },
-  tableHeadCell: { color: C.white, fontSize: 7.5, fontFamily: "Helvetica-Bold", textTransform: "uppercase", letterSpacing: 0.6 },
+  tableHeadCell: { color: C.white, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.6 },
   tableRow: { flexDirection: "row", paddingVertical: 9, borderBottomWidth: 1, borderBottomColor: C.border },
   tableRowAlt: { backgroundColor: C.bg },
   tableCell: { fontSize: 8.5, color: C.navy },
@@ -113,8 +122,8 @@ const s = StyleSheet.create({
     backgroundColor: C.navy, borderRadius: 5,
     paddingHorizontal: 12, paddingVertical: 9, marginTop: 6,
   },
-  grandLabel: { color: C.white, fontSize: 9, fontFamily: "Helvetica-Bold", letterSpacing: 0.5 },
-  grandValue: { color: "#A5B4FC", fontSize: 13, fontFamily: "Helvetica-Bold" },
+  grandLabel: { color: C.white, fontSize: 9, fontFamily: "Roboto", fontWeight: 700, letterSpacing: 0.5 },
+  grandValue: { color: "#A5B4FC", fontSize: 13, fontFamily: "Roboto", fontWeight: 700 },
 
   // ── Amount in words ──
   wordsBox: {
@@ -122,10 +131,10 @@ const s = StyleSheet.create({
     paddingHorizontal: 12, paddingVertical: 8, marginBottom: 16,
   },
   wordsLabel: { color: C.muted, fontSize: 7, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 3 },
-  wordsValue: { color: C.navy, fontSize: 8.5, fontFamily: "Helvetica-Bold" },
+  wordsValue: { color: C.navy, fontSize: 8.5, fontFamily: "Roboto", fontWeight: 700 },
 
   // ── Notes / Terms ──
-  noteLabel: { color: C.indigo, fontSize: 7, fontFamily: "Helvetica-Bold", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 },
+  noteLabel: { color: C.indigo, fontSize: 7, fontFamily: "Roboto", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 },
   noteText: { color: C.slate, fontSize: 8.5, lineHeight: 1.5 },
   noteBlock: { marginBottom: 12 },
 
@@ -133,7 +142,7 @@ const s = StyleSheet.create({
   bankGrid: { flexDirection: "row", flexWrap: "wrap" },
   bankItem: { width: "50%", marginBottom: 5 },
   bankLabel: { color: C.muted, fontSize: 7 },
-  bankValue: { color: C.navy, fontSize: 8.5, fontFamily: "Helvetica-Bold" },
+  bankValue: { color: C.navy, fontSize: 8.5, fontFamily: "Roboto", fontWeight: 700 },
 
   // ── Footer ──
   footer: {
@@ -142,7 +151,7 @@ const s = StyleSheet.create({
     flexDirection: "row", justifyContent: "space-between", alignItems: "center",
   },
   footerLeft: { color: C.muted, fontSize: 7.5 },
-  footerRight: { color: C.indigo, fontSize: 7.5, fontFamily: "Helvetica-Bold" },
+  footerRight: { color: C.indigo, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700 },
 
   pageNum: { position: "absolute", bottom: 16, right: 36, color: C.muted, fontSize: 7.5 },
 });
@@ -264,7 +273,7 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
                 <Text style={[s.tableCellMuted, s.colRate]}>{fmt(Number(item.rate))}</Text>
                 <Text style={[s.tableCellMuted, s.colDisc]}>{item.discount_percent ?? 0}%</Text>
                 <Text style={[s.tableCellMuted, s.colGst]}>{item.gst_percent ?? 0}%</Text>
-                <Text style={[s.tableCell, s.colAmt, { fontFamily: "Helvetica-Bold" }]}>{fmt(Number(item.amount))}</Text>
+                <Text style={[s.tableCell, s.colAmt, { fontFamily: "Roboto", fontWeight: 700 }]}>{fmt(Number(item.amount))}</Text>
               </View>
             ))}
           </View>
