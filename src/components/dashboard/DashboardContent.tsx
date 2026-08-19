@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FileText, Receipt, TrendingUp, Clock, ChevronRight, Plus } from "lucide-react";
+import { FileText, Receipt, TrendingUp, Clock, ChevronRight, Plus, ArrowUpRight } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PaymentStatusBadge } from "@/components/ui/badge";
@@ -50,16 +50,10 @@ function getPeriodDates(period: PeriodKey) {
       return { from: format(ws, "yyyy-MM-dd"), to: format(we, "yyyy-MM-dd") };
     }
     case "this_month":
-      return {
-        from: format(startOfMonth(now), "yyyy-MM-dd"),
-        to: format(endOfMonth(now), "yyyy-MM-dd"),
-      };
+      return { from: format(startOfMonth(now), "yyyy-MM-dd"), to: format(endOfMonth(now), "yyyy-MM-dd") };
     case "last_month": {
       const lm = subMonths(now, 1);
-      return {
-        from: format(startOfMonth(lm), "yyyy-MM-dd"),
-        to: format(endOfMonth(lm), "yyyy-MM-dd"),
-      };
+      return { from: format(startOfMonth(lm), "yyyy-MM-dd"), to: format(endOfMonth(lm), "yyyy-MM-dd") };
     }
   }
 }
@@ -76,9 +70,7 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
   const hour = now.getHours();
   const greeting = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
 
-  useEffect(() => {
-    fetchPeriodData();
-  }, [period]);
+  useEffect(() => { fetchPeriodData(); }, [period]);
 
   async function fetchPeriodData() {
     setLoading(true);
@@ -96,12 +88,10 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
 
     setInvoices((data as Invoice[]) ?? []);
 
-    // Build weekly breakdown for month views
     if (period === "this_month" || period === "last_month") {
       const base = period === "this_month" ? now : subMonths(now, 1);
       const monthStart = startOfMonth(base);
       const monthEnd = endOfMonth(base);
-
       const weekSummaries: WeekSummary[] = [];
       let weekStart = startOfWeek(monthStart, { weekStartsOn: 1 });
       let weekNum = 1;
@@ -110,99 +100,88 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
         const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
         const clampedStart = weekStart < monthStart ? monthStart : weekStart;
         const clampedEnd = weekEnd > monthEnd ? monthEnd : weekEnd;
-
         const fromStr = format(clampedStart, "yyyy-MM-dd");
         const toStr = format(clampedEnd, "yyyy-MM-dd");
-
-        const weekItems = ((data as Invoice[]) ?? []).filter(
-          (inv) => inv.date >= fromStr && inv.date <= toStr
-        );
-
-        weekSummaries.push({
-          label: `Week ${weekNum}`,
-          count: weekItems.length,
-          total: weekItems.reduce((s, i) => s + Number(i.grand_total), 0),
-          from: fromStr,
-          to: toStr,
-        });
-
+        const weekItems = ((data as Invoice[]) ?? []).filter(inv => inv.date >= fromStr && inv.date <= toStr);
+        weekSummaries.push({ label: `Week ${weekNum}`, count: weekItems.length, total: weekItems.reduce((s, i) => s + Number(i.grand_total), 0), from: fromStr, to: toStr });
         weekStart = addWeeks(weekStart, 1);
         weekNum++;
         if (weekNum > 6) break;
       }
-
       setWeeks(weekSummaries);
     } else {
       setWeeks([]);
     }
-
     setLoading(false);
   }
 
   function handleWeekClick(week: WeekSummary) {
-    if (selectedWeek === week.label) {
-      setSelectedWeek(null);
-      setWeekInvoices([]);
-      return;
-    }
+    if (selectedWeek === week.label) { setSelectedWeek(null); setWeekInvoices([]); return; }
     setSelectedWeek(week.label);
-    const filtered = invoices.filter((inv) => inv.date >= week.from && inv.date <= week.to);
-    setWeekInvoices(filtered);
+    setWeekInvoices(invoices.filter(inv => inv.date >= week.from && inv.date <= week.to));
   }
 
   const periodStats = {
     count: invoices.length,
     total: invoices.reduce((s, i) => s + Number(i.grand_total), 0),
-    paid: invoices.filter((i) => i.payment_status === "paid").reduce((s, i) => s + Number(i.grand_total), 0),
-    pending: invoices.filter((i) => i.payment_status !== "paid").reduce((s, i) => s + Number(i.balance_due), 0),
+    paid: invoices.filter(i => i.payment_status === "paid").reduce((s, i) => s + Number(i.grand_total), 0),
+    pending: invoices.filter(i => i.payment_status !== "paid").reduce((s, i) => s + Number(i.balance_due), 0),
   };
 
+  const displayInvoices = selectedWeek ? weekInvoices : invoices;
+
   return (
-    <div className="px-4 lg:px-8 py-6 max-w-6xl mx-auto w-full space-y-6">
+    <div className="px-4 lg:px-8 py-6 max-w-5xl mx-auto w-full space-y-5">
+
       {/* Greeting */}
-      <div>
-        <p className="text-sm text-brand-muted">{greeting}</p>
-        <h2 className="text-2xl font-bold text-brand-dark">Shreedhar Sales</h2>
+      <div className="pt-1">
+        <p style={{ fontSize: 12, fontWeight: 500, color: "#9CA3AF", letterSpacing: "0.02em" }}>{greeting}</p>
+        <h2 style={{ fontSize: 22, fontWeight: 700, color: "#1A1740", letterSpacing: "-0.03em", lineHeight: 1.2, marginTop: 2 }}>Shreedhar Sales</h2>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <SummaryCard icon={<FileText className="h-5 w-5" />} label="Total Quotations" value={stats.total_quotations.toString()} href="/quotations" />
-        <SummaryCard icon={<Receipt className="h-5 w-5" />} label="Total Invoices" value={stats.total_invoices.toString()} href="/invoices" />
-        <SummaryCard icon={<TrendingUp className="h-5 w-5" />} label="This Month" value={formatCurrency(stats.month_billing)} href="/invoices" gold />
-        <SummaryCard icon={<Clock className="h-5 w-5" />} label="Pending" value={formatCurrency(stats.pending_payments)} href="/payments" warn />
+      {/* Summary Cards — no borders, shadow only */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <StatCard icon={<FileText className="h-4 w-4" />} label="Quotations" value={stats.total_quotations.toString()} href="/quotations" color="#4F46E5" bg="#EEF2FF" />
+        <StatCard icon={<Receipt className="h-4 w-4" />} label="Invoices" value={stats.total_invoices.toString()} href="/invoices" color="#4F46E5" bg="#EEF2FF" />
+        <StatCard icon={<TrendingUp className="h-4 w-4" />} label="This Month" value={formatCurrency(stats.month_billing)} href="/invoices" color="#059669" bg="#ECFDF5" />
+        <StatCard icon={<Clock className="h-4 w-4" />} label="Pending" value={formatCurrency(stats.pending_payments)} href="/payments" color="#D97706" bg="#FFFBEB" />
       </div>
 
       {/* Quick Actions */}
-      <div className="flex gap-3 flex-wrap">
+      <div className="flex gap-2.5 flex-wrap">
         <Link href="/quotations/new">
-          <Button variant="primary" size="md">
-            <Plus className="h-4 w-4" />
-            New Quotation
-          </Button>
+          <Button variant="primary" size="md"><Plus className="h-4 w-4" />New Quotation</Button>
         </Link>
         <Link href="/invoices/new">
-          <Button variant="secondary" size="md">
-            <Plus className="h-4 w-4" />
-            New Invoice
-          </Button>
+          <Button variant="secondary" size="md"><Plus className="h-4 w-4" />New Invoice</Button>
         </Link>
       </div>
 
-      {/* Period filter */}
-      <div className="bg-surface rounded-xl border border-brand-border shadow-card overflow-hidden">
-        <div className="px-4 lg:px-6 py-3 border-b border-brand-border flex items-center justify-between gap-3">
-          <h3 className="font-semibold text-brand-dark text-sm lg:text-base flex-shrink-0">Invoice Activity</h3>
-          <div className="flex gap-1 bg-brand-beige rounded-lg p-1 overflow-x-auto max-w-full" style={{ scrollbarWidth: "none" }}>
-            {PERIODS.map((p) => (
+      {/* Invoice Activity — clean card, no border */}
+      <div style={{ background: "#fff", borderRadius: 16, boxShadow: "0 2px 12px rgba(30,27,75,0.07), 0 1px 3px rgba(30,27,75,0.04)", overflow: "hidden" }}>
+
+        {/* Header row */}
+        <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, borderBottom: "1px solid #F0F2FA" }}>
+          <p style={{ fontSize: 14, fontWeight: 600, color: "#1A1740", letterSpacing: "-0.01em" }}>Invoice Activity</p>
+          {/* Period tabs */}
+          <div style={{ display: "flex", gap: 2, background: "#F4F6FB", borderRadius: 10, padding: 3, overflowX: "auto", scrollbarWidth: "none" as any }}>
+            {PERIODS.map(p => (
               <button
                 key={p.value}
                 onClick={() => setPeriod(p.value)}
-                className={`px-2.5 lg:px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
-                  period === p.value
-                    ? "bg-brand-dark text-brand-gold shadow-sm"
-                    : "text-brand-muted hover:text-brand-dark"
-                }`}
+                style={{
+                  padding: "5px 10px",
+                  borderRadius: 8,
+                  fontSize: 11.5,
+                  fontWeight: 600,
+                  whiteSpace: "nowrap" as any,
+                  border: "none",
+                  cursor: "pointer",
+                  transition: "all 0.15s",
+                  background: period === p.value ? "#1A1740" : "transparent",
+                  color: period === p.value ? "#fff" : "#9CA3AF",
+                  boxShadow: period === p.value ? "0 1px 4px rgba(30,27,75,0.18)" : "none",
+                }}
               >
                 {p.label}
               </button>
@@ -210,66 +189,81 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
           </div>
         </div>
 
-        {/* Period Stats Row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-brand-border border-b border-brand-border">
-          <PeriodStat label="Invoices" value={periodStats.count.toString()} />
-          <PeriodStat label="Total Billed" value={formatCurrency(periodStats.total)} />
-          <PeriodStat label="Collected" value={formatCurrency(periodStats.paid)} />
-          <PeriodStat label="Outstanding" value={formatCurrency(periodStats.pending)} />
+        {/* Period Stats — 4 pills in a row */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0, padding: "12px 16px", borderBottom: "1px solid #F0F2FA" }}>
+          <MiniStat label="Invoices" value={periodStats.count.toString()} />
+          <MiniStat label="Total Billed" value={formatCurrency(periodStats.total)} accent />
+          <MiniStat label="Collected" value={formatCurrency(periodStats.paid)} green />
+          <MiniStat label="Outstanding" value={formatCurrency(periodStats.pending)} warn />
         </div>
 
         {/* Weekly breakdown */}
         {weeks.length > 0 && (
-          <div className="border-b border-brand-border">
-            <div className="px-6 py-3">
-              <p className="text-xs font-semibold text-brand-muted uppercase tracking-wide mb-3">Weekly Breakdown</p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {weeks.map((week) => (
-                  <button
-                    key={week.label}
-                    onClick={() => handleWeekClick(week)}
-                    className={`text-left p-3 rounded-lg border transition-all ${
-                      selectedWeek === week.label
-                        ? "border-brand-brown bg-brand-beige-dark"
-                        : "border-brand-border hover:border-brand-brown hover:bg-brand-beige"
-                    }`}
-                  >
-                    <p className="text-xs font-semibold text-brand-muted">{week.label}</p>
-                    <p className="text-sm font-bold text-brand-dark mt-0.5">{week.count} invoices</p>
-                    <p className="text-xs text-brand-brown font-medium">{formatCurrency(week.total)}</p>
-                  </button>
-                ))}
-              </div>
+          <div style={{ padding: "12px 16px", borderBottom: "1px solid #F0F2FA" }}>
+            <p style={{ fontSize: 10, fontWeight: 600, color: "#C4C9DC", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Weekly Breakdown</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 6 }} className="sm:grid-cols-4" >
+              {weeks.map(week => (
+                <button
+                  key={week.label}
+                  onClick={() => handleWeekClick(week)}
+                  style={{
+                    textAlign: "left",
+                    padding: "10px 12px",
+                    borderRadius: 10,
+                    border: "none",
+                    cursor: "pointer",
+                    transition: "all 0.15s",
+                    background: selectedWeek === week.label ? "#EEF2FF" : "#F7F8FD",
+                    boxShadow: selectedWeek === week.label ? "inset 0 0 0 1.5px #4F46E5" : "none",
+                  }}
+                >
+                  <p style={{ fontSize: 10, fontWeight: 600, color: "#9CA3AF" }}>{week.label}</p>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: "#1A1740", marginTop: 2 }}>{week.count} invoices</p>
+                  <p style={{ fontSize: 11, color: "#4F46E5", fontWeight: 600, marginTop: 1 }}>{formatCurrency(week.total)}</p>
+                </button>
+              ))}
             </div>
           </div>
         )}
 
         {/* Invoice list */}
-        <div className="divide-y divide-brand-border">
+        <div>
           {loading ? (
-            <div className="py-12 text-center text-sm text-brand-muted">Loading...</div>
-          ) : (selectedWeek ? weekInvoices : invoices).length === 0 ? (
-            <div className="py-12 text-center">
-              <p className="text-sm text-brand-muted">No invoices in this period</p>
+            <div style={{ padding: "40px 0", textAlign: "center", fontSize: 13, color: "#9CA3AF" }}>Loading…</div>
+          ) : displayInvoices.length === 0 ? (
+            <div style={{ padding: "40px 0", textAlign: "center" }}>
+              <p style={{ fontSize: 13, color: "#C4C9DC" }}>No invoices in this period</p>
             </div>
           ) : (
-            (selectedWeek ? weekInvoices : invoices).slice(0, 8).map((inv) => (
-              <Link key={inv.id} href={`/invoices/${inv.id}`} className="flex items-center justify-between px-4 lg:px-6 py-3 hover:bg-brand-beige transition-colors group">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-brand-beige-dark flex items-center justify-center flex-shrink-0">
-                    <Receipt className="h-3 w-3 text-brand-muted" />
+            displayInvoices.slice(0, 8).map((inv, i) => (
+              <Link key={inv.id} href={`/invoices/${inv.id}`}
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "12px 20px",
+                  borderTop: i === 0 ? "none" : "1px solid #F7F8FD",
+                  transition: "background 0.12s",
+                  textDecoration: "none",
+                }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "#F7F8FD"}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: "#EEF2FF", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Receipt style={{ width: 13, height: 13, color: "#818CF8" }} />
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-brand-dark truncate">{inv.invoice_number}</p>
-                    <p className="text-xs text-brand-muted truncate">{(inv.customers as any)?.name ?? ""} · {formatDate(inv.date)}</p>
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "#1A1740", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{inv.invoice_number}</p>
+                    <p style={{ fontSize: 11.5, color: "#9CA3AF", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {(inv.customers as any)?.name ?? ""} · {formatDate(inv.date)}
+                    </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-brand-dark">{formatCurrency(Number(inv.grand_total))}</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0, marginLeft: 8 }}>
+                  <div style={{ textAlign: "right" }}>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: "#1A1740" }}>{formatCurrency(Number(inv.grand_total))}</p>
                     <PaymentStatusBadge status={inv.payment_status} />
                   </div>
-                  <ChevronRight className="h-4 w-4 text-brand-muted opacity-0 group-hover:opacity-100 transition-opacity hidden lg:block" />
+                  <ArrowUpRight style={{ width: 13, height: 13, color: "#C4C9DC" }} className="hidden lg:block" />
                 </div>
               </Link>
             ))
@@ -277,8 +271,8 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
         </div>
 
         {!loading && invoices.length > 8 && (
-          <div className="px-6 py-3 border-t border-brand-border text-center">
-            <Link href="/invoices" className="text-sm text-brand-brown hover:text-brand-dark font-medium">
+          <div style={{ padding: "12px 20px", borderTop: "1px solid #F0F2FA", textAlign: "center" }}>
+            <Link href="/invoices" style={{ fontSize: 12.5, color: "#4F46E5", fontWeight: 600, textDecoration: "none" }}>
               View all {invoices.length} invoices →
             </Link>
           </div>
@@ -288,33 +282,38 @@ export function DashboardContent({ stats, userId }: DashboardContentProps) {
   );
 }
 
-function SummaryCard({ icon, label, value, href, gold, warn }: {
-  icon: React.ReactNode; label: string; value: string; href: string; gold?: boolean; warn?: boolean;
+function StatCard({ icon, label, value, href, color, bg }: {
+  icon: React.ReactNode; label: string; value: string; href: string; color: string; bg: string;
 }) {
   return (
-    <Link href={href} className="block group">
-      <div className={`bg-surface rounded-xl border shadow-card p-4 lg:p-5 transition-all group-hover:shadow-dropdown ${
-        gold ? "border-brand-gold/40" : warn ? "border-amber-200" : "border-brand-border"
-      }`}>
-        <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-3 ${
-          gold ? "bg-brand-gold/20 text-brand-copper" : warn ? "bg-amber-50 text-amber-600" : "bg-brand-beige text-brand-muted"
-        }`}>
+    <Link href={href} style={{ display: "block", textDecoration: "none" }}>
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: 14,
+          padding: "16px 16px 14px",
+          boxShadow: "0 2px 10px rgba(30,27,75,0.07), 0 1px 2px rgba(30,27,75,0.03)",
+          transition: "transform 0.15s, box-shadow 0.15s",
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 20px rgba(30,27,75,0.11), 0 2px 6px rgba(30,27,75,0.05)"; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ""; (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 10px rgba(30,27,75,0.07), 0 1px 2px rgba(30,27,75,0.03)"; }}
+      >
+        <div style={{ width: 32, height: 32, borderRadius: 8, background: bg, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12, color }}>
           {icon}
         </div>
-        <p className="text-xs text-brand-muted font-medium">{label}</p>
-        <p className={`text-lg font-bold mt-0.5 ${gold ? "text-brand-copper" : warn ? "text-amber-700" : "text-brand-dark"}`}>
-          {value}
-        </p>
+        <p style={{ fontSize: 11, fontWeight: 500, color: "#9CA3AF", letterSpacing: "0.01em" }}>{label}</p>
+        <p style={{ fontSize: 20, fontWeight: 700, color: "#1A1740", letterSpacing: "-0.03em", marginTop: 2, lineHeight: 1.1 }}>{value}</p>
       </div>
     </Link>
   );
 }
 
-function PeriodStat({ label, value }: { label: string; value: string }) {
+function MiniStat({ label, value, accent, green, warn }: { label: string; value: string; accent?: boolean; green?: boolean; warn?: boolean }) {
+  const color = green ? "#059669" : warn ? "#D97706" : accent ? "#4F46E5" : "#1A1740";
   return (
-    <div className="px-4 lg:px-6 py-3">
-      <p className="text-xs text-brand-muted">{label}</p>
-      <p className="text-base font-bold text-brand-dark">{value}</p>
+    <div style={{ padding: "6px 8px" }}>
+      <p style={{ fontSize: 10.5, color: "#9CA3AF", fontWeight: 500 }}>{label}</p>
+      <p style={{ fontSize: 15, fontWeight: 700, color, letterSpacing: "-0.02em", marginTop: 1 }}>{value}</p>
     </div>
   );
 }
