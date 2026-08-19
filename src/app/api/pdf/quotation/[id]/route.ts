@@ -4,6 +4,8 @@ import { getOwnerId } from "@/lib/owner";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { QuotationPDF } from "@/components/documents/QuotationPDF";
 import React from "react";
+import fs from "fs";
+import path from "path";
 
 export async function GET(
   request: NextRequest,
@@ -25,8 +27,17 @@ export async function GET(
     quotation.quotation_items.sort((a: any, b: any) => a.sort_order - b.sort_order);
   }
 
+  // Read logo from public folder as base64
+  let logoBase64: string | null = null;
+  try {
+    const logoPath = path.join(process.cwd(), "public", "logo.png");
+    if (fs.existsSync(logoPath)) {
+      logoBase64 = `data:image/png;base64,${fs.readFileSync(logoPath).toString("base64")}`;
+    }
+  } catch {}
+
   const buffer = await renderToBuffer(
-    React.createElement(QuotationPDF, { quotation: quotation as any, company, docSettings }) as any
+    React.createElement(QuotationPDF, { quotation: quotation as any, company, docSettings, logoBase64 }) as any
   );
 
   const disposition = new URL(request.url).searchParams.get("dl") === "1"

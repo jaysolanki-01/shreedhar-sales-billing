@@ -1,294 +1,362 @@
 import React from "react";
 import {
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet,
-  Font,
+  Document, Page, Text, View, StyleSheet, Image, Font,
 } from "@react-pdf/renderer";
 import { amountToWords } from "@/lib/number-to-words";
 import { CompanySettings, DocSettings, Quotation } from "@/types";
 
-// Brand colors
 const C = {
-  dark: "#2F1D13",
-  brown: "#7E441C",
-  gold: "#E6AE73",
-  beige: "#F7F2EC",
-  beigeDark: "#EDE5D8",
-  border: "#E0D5C9",
-  muted: "#9A7B62",
-  white: "#FFFFFF",
+  navy:    "#1E1B4B",
+  indigo:  "#4F46E5",
+  indigoL: "#EEF2FF",
+  slate:   "#64748B",
+  muted:   "#94A3B8",
+  border:  "#E2E8F0",
+  bg:      "#F8FAFC",
+  white:   "#FFFFFF",
+  green:   "#059669",
 };
 
-const styles = StyleSheet.create({
-  page: { fontFamily: "Helvetica", backgroundColor: C.white, paddingBottom: 60 },
-  // Header
-  header: { backgroundColor: C.dark, padding: 28, flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
-  companyName: { color: C.gold, fontSize: 14, fontFamily: "Helvetica-Bold", marginBottom: 4 },
-  companyDetail: { color: "#FFFFFF99", fontSize: 8, marginBottom: 2 },
-  companyRight: { alignItems: "flex-end" },
-  // Content
-  content: { paddingHorizontal: 32, paddingTop: 24 },
-  // Title row
-  titleRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 },
-  docTitle: { color: C.dark, fontSize: 22, fontFamily: "Helvetica-Bold", letterSpacing: 1 },
-  statusBadge: { backgroundColor: C.beige, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 3, marginTop: 4 },
-  statusText: { color: C.muted, fontSize: 9, fontFamily: "Helvetica-Bold" },
-  metaLabel: { color: C.muted, fontSize: 8 },
-  metaValue: { color: C.dark, fontSize: 9, fontFamily: "Helvetica-Bold" },
-  metaRow: { flexDirection: "row", justifyContent: "flex-end", marginBottom: 3 },
-  // Bill To
-  sectionLabel: { color: C.muted, fontSize: 7.5, fontFamily: "Helvetica-Bold", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6 },
-  billToName: { color: C.dark, fontSize: 11, fontFamily: "Helvetica-Bold", marginBottom: 2 },
-  billToDetail: { color: C.muted, fontSize: 9, marginBottom: 1.5 },
-  divider: { height: 1, backgroundColor: C.border, marginVertical: 16 },
-  // Table
-  tableHeader: { backgroundColor: C.dark, flexDirection: "row", paddingVertical: 8 },
-  tableHeaderCell: { color: C.gold, fontSize: 8, fontFamily: "Helvetica-Bold", textTransform: "uppercase", letterSpacing: 0.5 },
-  tableRow: { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: C.border, paddingVertical: 8 },
-  tableRowAlt: { backgroundColor: C.beige },
-  tableCell: { fontSize: 9, color: C.dark },
-  // Cols
-  colDesc: { flex: 3, paddingLeft: 10 },
-  colQty: { width: 50, textAlign: "right" },
-  colRate: { width: 70, textAlign: "right" },
-  colDisc: { width: 50, textAlign: "right" },
-  colGst: { width: 50, textAlign: "right" },
-  colAmt: { width: 75, paddingRight: 10, textAlign: "right" },
-  // Totals
-  totalsRow: { flexDirection: "row", justifyContent: "flex-end", marginBottom: 4 },
-  totalsLabel: { width: 130, textAlign: "right", color: C.muted, fontSize: 9 },
-  totalsValue: { width: 90, textAlign: "right", color: C.dark, fontSize: 9 },
-  grandTotalBox: { backgroundColor: C.beige, borderRadius: 6, paddingHorizontal: 12, paddingVertical: 8, flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 6 },
-  grandTotalLabel: { color: C.dark, fontSize: 10, fontFamily: "Helvetica-Bold" },
-  grandTotalValue: { color: C.brown, fontSize: 14, fontFamily: "Helvetica-Bold" },
-  // Amount in words
-  amountWords: { backgroundColor: C.beige, borderRadius: 6, paddingHorizontal: 12, paddingVertical: 8, marginTop: 12, marginBottom: 16 },
-  amountWordsLabel: { color: C.muted, fontSize: 7.5 },
-  amountWordsValue: { color: C.dark, fontSize: 9.5, fontFamily: "Helvetica-Bold", marginTop: 2 },
-  // Notes / Terms
-  smallLabel: { color: C.muted, fontSize: 7.5, fontFamily: "Helvetica-Bold", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 3 },
-  smallText: { color: C.dark, fontSize: 8.5 },
-  // Bank
+const s = StyleSheet.create({
+  page: {
+    fontFamily: "Helvetica",
+    backgroundColor: C.white,
+    paddingBottom: 48,
+    fontSize: 9,
+    color: C.navy,
+  },
+
+  // ── Top accent stripe ──
+  stripe: { height: 4, backgroundColor: C.indigo },
+
+  // ── Header ──
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    paddingHorizontal: 36,
+    paddingTop: 24,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: C.border,
+  },
+  logoBox: {
+    width: 44, height: 44, borderRadius: 8,
+    backgroundColor: C.indigoL,
+    alignItems: "center", justifyContent: "center",
+    marginBottom: 6,
+    overflow: "hidden",
+  },
+  logoImg: { width: 44, height: 44, objectFit: "contain" },
+  logoText: { color: C.indigo, fontSize: 16, fontFamily: "Helvetica-Bold" },
+  companyName: { color: C.navy, fontSize: 13, fontFamily: "Helvetica-Bold", marginBottom: 3 },
+  companyLine: { color: C.slate, fontSize: 8, marginBottom: 1.5, lineHeight: 1.4 },
+  headerRight: { alignItems: "flex-end" },
+  docBadge: {
+    backgroundColor: C.indigoL, borderRadius: 4,
+    paddingHorizontal: 8, paddingVertical: 3, marginBottom: 8,
+  },
+  docBadgeText: { color: C.indigo, fontSize: 8, fontFamily: "Helvetica-Bold", letterSpacing: 1 },
+
+  // ── Body ──
+  body: { paddingHorizontal: 36, paddingTop: 22 },
+
+  // ── Meta grid (Quotation No / Date / Valid Until) ──
+  metaRow: { flexDirection: "row", marginBottom: 3, justifyContent: "flex-end" },
+  metaLabel: { color: C.muted, fontSize: 8, width: 68, textAlign: "right", marginRight: 6 },
+  metaValue: { color: C.navy, fontSize: 8.5, fontFamily: "Helvetica-Bold", textAlign: "right", minWidth: 90 },
+
+  // ── Bill To / From two-col ──
+  twoCol: { flexDirection: "row", marginBottom: 20, gap: 20 },
+  colBlock: { flex: 1 },
+  sectionLabel: {
+    color: C.indigo, fontSize: 7, fontFamily: "Helvetica-Bold",
+    textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6,
+    borderBottomWidth: 1, borderBottomColor: C.indigoL, paddingBottom: 4,
+  },
+  contactName: { color: C.navy, fontSize: 10, fontFamily: "Helvetica-Bold", marginBottom: 2 },
+  contactLine: { color: C.slate, fontSize: 8, marginBottom: 1.5, lineHeight: 1.4 },
+
+  // ── Status badge ──
+  statusBadge: {
+    backgroundColor: C.bg, borderRadius: 3,
+    paddingHorizontal: 6, paddingVertical: 2,
+    alignSelf: "flex-start", marginTop: 4,
+  },
+  statusText: { color: C.slate, fontSize: 7.5, fontFamily: "Helvetica-Bold" },
+
+  // ── Table ──
+  tableWrap: { borderRadius: 6, overflow: "hidden", borderWidth: 1, borderColor: C.border, marginBottom: 16 },
+  tableHead: { backgroundColor: C.navy, flexDirection: "row", paddingVertical: 9 },
+  tableHeadCell: { color: C.white, fontSize: 7.5, fontFamily: "Helvetica-Bold", textTransform: "uppercase", letterSpacing: 0.6 },
+  tableRow: { flexDirection: "row", paddingVertical: 9, borderBottomWidth: 1, borderBottomColor: C.border },
+  tableRowAlt: { backgroundColor: C.bg },
+  tableCell: { fontSize: 8.5, color: C.navy },
+  tableCellMuted: { fontSize: 8.5, color: C.slate },
+
+  colDesc: { flex: 3, paddingLeft: 12 },
+  colQty:  { width: 42, textAlign: "right" },
+  colRate: { width: 66, textAlign: "right" },
+  colDisc: { width: 44, textAlign: "right" },
+  colGst:  { width: 44, textAlign: "right" },
+  colAmt:  { width: 72, paddingRight: 12, textAlign: "right" },
+
+  // ── Totals ──
+  totalsWrap: { alignItems: "flex-end", marginBottom: 16 },
+  totalsBox: { width: 230 },
+  totalRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 4 },
+  totalLabel: { color: C.slate, fontSize: 8.5 },
+  totalValue: { color: C.navy, fontSize: 8.5 },
+  divider: { height: 1, backgroundColor: C.border, marginVertical: 6 },
+  grandRow: {
+    flexDirection: "row", justifyContent: "space-between", alignItems: "center",
+    backgroundColor: C.navy, borderRadius: 5,
+    paddingHorizontal: 12, paddingVertical: 9, marginTop: 6,
+  },
+  grandLabel: { color: C.white, fontSize: 9, fontFamily: "Helvetica-Bold", letterSpacing: 0.5 },
+  grandValue: { color: "#A5B4FC", fontSize: 13, fontFamily: "Helvetica-Bold" },
+
+  // ── Amount in words ──
+  wordsBox: {
+    backgroundColor: C.bg, borderRadius: 5, borderWidth: 1, borderColor: C.border,
+    paddingHorizontal: 12, paddingVertical: 8, marginBottom: 16,
+  },
+  wordsLabel: { color: C.muted, fontSize: 7, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 3 },
+  wordsValue: { color: C.navy, fontSize: 8.5, fontFamily: "Helvetica-Bold" },
+
+  // ── Notes / Terms ──
+  noteLabel: { color: C.indigo, fontSize: 7, fontFamily: "Helvetica-Bold", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 },
+  noteText: { color: C.slate, fontSize: 8.5, lineHeight: 1.5 },
+  noteBlock: { marginBottom: 12 },
+
+  // ── Bank ──
   bankGrid: { flexDirection: "row", flexWrap: "wrap" },
-  bankItem: { width: "50%", marginBottom: 3 },
-  bankLabel: { color: C.muted, fontSize: 7.5 },
-  bankValue: { color: C.dark, fontSize: 8.5, fontFamily: "Helvetica-Bold" },
-  // Footer
-  footer: { borderTopWidth: 1, borderTopColor: C.border, marginTop: 20, paddingTop: 12, alignItems: "center" },
-  footerText: { color: C.muted, fontSize: 8 },
-  footerBrand: { color: C.dark, fontSize: 9, fontFamily: "Helvetica-Bold", marginTop: 2 },
-  pageNumber: { position: "absolute", bottom: 20, right: 32, color: C.muted, fontSize: 8 },
+  bankItem: { width: "50%", marginBottom: 5 },
+  bankLabel: { color: C.muted, fontSize: 7 },
+  bankValue: { color: C.navy, fontSize: 8.5, fontFamily: "Helvetica-Bold" },
+
+  // ── Footer ──
+  footer: {
+    borderTopWidth: 1, borderTopColor: C.border,
+    marginTop: 20, paddingTop: 12, paddingHorizontal: 36,
+    flexDirection: "row", justifyContent: "space-between", alignItems: "center",
+  },
+  footerLeft: { color: C.muted, fontSize: 7.5 },
+  footerRight: { color: C.indigo, fontSize: 7.5, fontFamily: "Helvetica-Bold" },
+
+  pageNum: { position: "absolute", bottom: 16, right: 36, color: C.muted, fontSize: 7.5 },
 });
 
-function fmt(n: number): string {
+function fmt(n: number) {
   return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(n);
 }
 
-function fmtDate(d: string): string {
-  const dt = new Date(d);
-  return dt.toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" });
+function fmtDate(d: string) {
+  return new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" });
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  draft: "DRAFT", sent: "SENT", accepted: "ACCEPTED", rejected: "REJECTED", expired: "EXPIRED"
+const STATUS_COLOR: Record<string, string> = {
+  draft: "#94A3B8", sent: "#4F46E5", accepted: "#059669", rejected: "#DC2626", expired: "#94A3B8",
 };
 
 interface Props {
   quotation: Quotation & { quotation_items: any[]; customers: any };
   company: CompanySettings | null;
   docSettings: DocSettings | null;
+  logoBase64?: string | null;
 }
 
-export function QuotationPDF({ quotation, company, docSettings }: Props) {
+export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Props) {
   const customer = quotation.customers;
   const items = quotation.quotation_items ?? [];
-  const hasBankDetails = docSettings?.bank_account_number;
+  const companyName = company?.company_name ?? "Shreedhar Sales";
+  const statusColor = STATUS_COLOR[quotation.status] ?? C.slate;
 
   return (
-    <Document title={quotation.quotation_number} author={company?.company_name ?? "Shreedhar Sales"}>
-      <Page size="A4" style={styles.page} wrap>
+    <Document title={quotation.quotation_number} author={companyName}>
+      <Page size="A4" style={s.page} wrap>
+
+        {/* Top indigo stripe */}
+        <View style={s.stripe} />
+
         {/* Header */}
-        <View style={styles.header}>
+        <View style={s.header}>
+          {/* Left — Logo + Company */}
           <View>
-            <Text style={styles.companyName}>{company?.company_name ?? "SHREEDHAR SALES"}</Text>
-            {company?.address && <Text style={styles.companyDetail}>{company.address}</Text>}
-            {company?.phone && <Text style={styles.companyDetail}>{company.phone}</Text>}
-            {company?.email && <Text style={styles.companyDetail}>{company.email}</Text>}
-            {company?.gstin && <Text style={styles.companyDetail}>GSTIN: {company.gstin}</Text>}
+            <View style={s.logoBox}>
+              {logoBase64 ? (
+                <Image src={logoBase64} style={s.logoImg} />
+              ) : (
+                <Text style={s.logoText}>{companyName.charAt(0).toUpperCase()}</Text>
+              )}
+            </View>
+            <Text style={s.companyName}>{companyName}</Text>
+            {company?.address && <Text style={s.companyLine}>{company.address}</Text>}
+            {company?.phone && <Text style={s.companyLine}>{company.phone}</Text>}
+            {company?.email && <Text style={s.companyLine}>{company.email}</Text>}
+            {company?.gstin && <Text style={s.companyLine}>GSTIN: {company.gstin}</Text>}
           </View>
-          <View style={styles.companyRight}>
-            <Text style={[styles.companyDetail, { textAlign: "right" }]}>Professional Billing</Text>
+
+          {/* Right — Doc type + meta */}
+          <View style={s.headerRight}>
+            <View style={s.docBadge}>
+              <Text style={s.docBadgeText}>QUOTATION</Text>
+            </View>
+            <View style={s.metaRow}>
+              <Text style={s.metaLabel}>Quotation No</Text>
+              <Text style={s.metaValue}>{quotation.quotation_number}</Text>
+            </View>
+            <View style={s.metaRow}>
+              <Text style={s.metaLabel}>Date</Text>
+              <Text style={s.metaValue}>{fmtDate(quotation.date)}</Text>
+            </View>
+            <View style={s.metaRow}>
+              <Text style={s.metaLabel}>Valid Until</Text>
+              <Text style={s.metaValue}>{fmtDate(quotation.valid_until)}</Text>
+            </View>
+            {/* Status */}
+            <View style={[s.statusBadge, { backgroundColor: statusColor + "18", marginTop: 8 }]}>
+              <Text style={[s.statusText, { color: statusColor }]}>{quotation.status.toUpperCase()}</Text>
+            </View>
           </View>
         </View>
 
-        <View style={styles.content}>
-          {/* Title + Meta */}
-          <View style={styles.titleRow}>
-            <View>
-              <Text style={styles.docTitle}>QUOTATION</Text>
-              <View style={styles.statusBadge}>
-                <Text style={styles.statusText}>{STATUS_LABELS[quotation.status] ?? quotation.status.toUpperCase()}</Text>
-              </View>
+        {/* Body */}
+        <View style={s.body}>
+
+          {/* Bill To / From */}
+          <View style={s.twoCol}>
+            <View style={s.colBlock}>
+              <Text style={s.sectionLabel}>Bill To</Text>
+              <Text style={s.contactName}>{customer?.name ?? "—"}</Text>
+              {customer?.company_name && <Text style={s.contactLine}>{customer.company_name}</Text>}
+              {customer?.address && <Text style={s.contactLine}>{customer.address}</Text>}
+              {customer?.phone && <Text style={s.contactLine}>{customer.phone}</Text>}
+              {customer?.email && <Text style={s.contactLine}>{customer.email}</Text>}
+              {customer?.gstin && <Text style={s.contactLine}>GSTIN: {customer.gstin}</Text>}
             </View>
-            <View>
-              <View style={styles.metaRow}>
-                <Text style={[styles.metaLabel, { marginRight: 6 }]}>Quotation No:</Text>
-                <Text style={styles.metaValue}>{quotation.quotation_number}</Text>
-              </View>
-              <View style={styles.metaRow}>
-                <Text style={[styles.metaLabel, { marginRight: 6 }]}>Date:</Text>
-                <Text style={styles.metaValue}>{fmtDate(quotation.date)}</Text>
-              </View>
-              <View style={styles.metaRow}>
-                <Text style={[styles.metaLabel, { marginRight: 6 }]}>Valid Until:</Text>
-                <Text style={styles.metaValue}>{fmtDate(quotation.valid_until)}</Text>
-              </View>
+            <View style={s.colBlock}>
+              <Text style={s.sectionLabel}>From</Text>
+              <Text style={s.contactName}>{companyName}</Text>
+              {company?.address && <Text style={s.contactLine}>{company.address}</Text>}
+              {company?.phone && <Text style={s.contactLine}>{company.phone}</Text>}
+              {company?.gstin && <Text style={s.contactLine}>GSTIN: {company.gstin}</Text>}
             </View>
           </View>
-
-          <View style={styles.divider} />
-
-          {/* Bill To */}
-          <View style={{ marginBottom: 16 }}>
-            <Text style={styles.sectionLabel}>Bill To</Text>
-            <Text style={styles.billToName}>{customer?.name}</Text>
-            {customer?.company_name && <Text style={styles.billToDetail}>{customer.company_name}</Text>}
-            {customer?.address && <Text style={styles.billToDetail}>{customer.address}</Text>}
-            {customer?.phone && <Text style={styles.billToDetail}>{customer.phone}</Text>}
-            {customer?.gstin && <Text style={styles.billToDetail}>GSTIN: {customer.gstin}</Text>}
-          </View>
-
-          <View style={styles.divider} />
 
           {/* Items Table */}
-          <View style={styles.tableHeader}>
-            <Text style={[styles.tableHeaderCell, styles.colDesc]}>Description</Text>
-            <Text style={[styles.tableHeaderCell, styles.colQty]}>Qty</Text>
-            <Text style={[styles.tableHeaderCell, styles.colRate]}>Rate</Text>
-            <Text style={[styles.tableHeaderCell, styles.colDisc]}>Disc%</Text>
-            <Text style={[styles.tableHeaderCell, styles.colGst]}>GST%</Text>
-            <Text style={[styles.tableHeaderCell, styles.colAmt]}>Amount</Text>
+          <View style={s.tableWrap}>
+            <View style={s.tableHead}>
+              <Text style={[s.tableHeadCell, s.colDesc]}>Description</Text>
+              <Text style={[s.tableHeadCell, s.colQty]}>Qty</Text>
+              <Text style={[s.tableHeadCell, s.colRate]}>Rate</Text>
+              <Text style={[s.tableHeadCell, s.colDisc]}>Disc%</Text>
+              <Text style={[s.tableHeadCell, s.colGst]}>GST%</Text>
+              <Text style={[s.tableHeadCell, s.colAmt]}>Amount</Text>
+            </View>
+            {items.map((item: any, idx: number) => (
+              <View key={item.id ?? idx} style={[s.tableRow, idx % 2 === 1 ? s.tableRowAlt : {}, idx === items.length - 1 ? { borderBottomWidth: 0 } : {}]} wrap={false}>
+                <View style={[s.colDesc, { flexDirection: "column" }]}>
+                  <Text style={s.tableCell}>{item.description}</Text>
+                  {item.notes ? <Text style={[s.tableCellMuted, { fontSize: 7.5, marginTop: 1 }]}>{item.notes}</Text> : null}
+                </View>
+                <Text style={[s.tableCellMuted, s.colQty]}>{item.quantity}</Text>
+                <Text style={[s.tableCellMuted, s.colRate]}>{fmt(Number(item.rate))}</Text>
+                <Text style={[s.tableCellMuted, s.colDisc]}>{item.discount_percent ?? 0}%</Text>
+                <Text style={[s.tableCellMuted, s.colGst]}>{item.gst_percent ?? 0}%</Text>
+                <Text style={[s.tableCell, s.colAmt, { fontFamily: "Helvetica-Bold" }]}>{fmt(Number(item.amount))}</Text>
+              </View>
+            ))}
           </View>
 
-          {items.map((item: any, idx: number) => (
-            <View key={item.id ?? idx} style={[styles.tableRow, idx % 2 === 1 ? styles.tableRowAlt : {}]} wrap={false}>
-              <Text style={[styles.tableCell, styles.colDesc]}>{item.description}</Text>
-              <Text style={[styles.tableCell, styles.colQty]}>{item.quantity}</Text>
-              <Text style={[styles.tableCell, styles.colRate]}>{fmt(Number(item.rate))}</Text>
-              <Text style={[styles.tableCell, styles.colDisc]}>{item.discount_percent}%</Text>
-              <Text style={[styles.tableCell, styles.colGst]}>{item.gst_percent}%</Text>
-              <Text style={[styles.tableCell, styles.colAmt, { fontFamily: "Helvetica-Bold" }]}>{fmt(Number(item.amount))}</Text>
-            </View>
-          ))}
-
           {/* Totals */}
-          <View style={{ marginTop: 16, alignItems: "flex-end" }}>
-            <View style={{ width: 240 }}>
-              <View style={styles.totalsRow}>
-                <Text style={styles.totalsLabel}>Subtotal</Text>
-                <Text style={styles.totalsValue}>{fmt(Number(quotation.subtotal))}</Text>
+          <View style={s.totalsWrap}>
+            <View style={s.totalsBox}>
+              <View style={s.totalRow}>
+                <Text style={s.totalLabel}>Subtotal</Text>
+                <Text style={s.totalValue}>{fmt(Number(quotation.subtotal))}</Text>
               </View>
               {Number(quotation.discount_amount) > 0 && (
-                <View style={styles.totalsRow}>
-                  <Text style={styles.totalsLabel}>Discount</Text>
-                  <Text style={styles.totalsValue}>-{fmt(Number(quotation.discount_amount))}</Text>
+                <View style={s.totalRow}>
+                  <Text style={s.totalLabel}>Discount</Text>
+                  <Text style={[s.totalValue, { color: C.green }]}>− {fmt(Number(quotation.discount_amount))}</Text>
                 </View>
               )}
               {Number(quotation.discount_amount) > 0 && (
-                <View style={styles.totalsRow}>
-                  <Text style={styles.totalsLabel}>Taxable Amount</Text>
-                  <Text style={styles.totalsValue}>{fmt(Number(quotation.taxable_amount))}</Text>
+                <View style={s.totalRow}>
+                  <Text style={s.totalLabel}>Taxable Amount</Text>
+                  <Text style={s.totalValue}>{fmt(Number(quotation.taxable_amount))}</Text>
                 </View>
               )}
-              <View style={styles.totalsRow}>
-                <Text style={styles.totalsLabel}>GST</Text>
-                <Text style={styles.totalsValue}>{fmt(Number(quotation.gst_amount))}</Text>
+              <View style={s.totalRow}>
+                <Text style={s.totalLabel}>GST</Text>
+                <Text style={s.totalValue}>{fmt(Number(quotation.gst_amount))}</Text>
               </View>
-              <View style={styles.grandTotalBox}>
-                <Text style={styles.grandTotalLabel}>TOTAL</Text>
-                <Text style={styles.grandTotalValue}>{fmt(Number(quotation.grand_total))}</Text>
+              <View style={s.divider} />
+              <View style={s.grandRow}>
+                <Text style={s.grandLabel}>TOTAL AMOUNT</Text>
+                <Text style={s.grandValue}>{fmt(Number(quotation.grand_total))}</Text>
               </View>
             </View>
           </View>
 
           {/* Amount in words */}
-          <View style={styles.amountWords}>
-            <Text style={styles.amountWordsLabel}>Amount in Words</Text>
-            <Text style={styles.amountWordsValue}>{amountToWords(Number(quotation.grand_total))}</Text>
+          <View style={s.wordsBox}>
+            <Text style={s.wordsLabel}>Amount in Words</Text>
+            <Text style={s.wordsValue}>{amountToWords(Number(quotation.grand_total))}</Text>
           </View>
 
           {/* Notes */}
           {quotation.notes ? (
-            <View style={{ marginBottom: 12 }}>
-              <Text style={styles.smallLabel}>Notes</Text>
-              <Text style={styles.smallText}>{quotation.notes}</Text>
+            <View style={s.noteBlock}>
+              <Text style={s.noteLabel}>Notes</Text>
+              <Text style={s.noteText}>{quotation.notes}</Text>
             </View>
           ) : null}
 
           {/* Terms */}
           {quotation.terms ? (
-            <View style={{ marginBottom: 12 }}>
-              <Text style={styles.smallLabel}>Terms & Conditions</Text>
-              <Text style={styles.smallText}>{quotation.terms}</Text>
+            <View style={s.noteBlock}>
+              <Text style={s.noteLabel}>Terms & Conditions</Text>
+              <Text style={s.noteText}>{quotation.terms}</Text>
             </View>
           ) : null}
 
           {/* Bank Details */}
-          {hasBankDetails && (
-            <View style={{ marginBottom: 12 }}>
-              <View style={styles.divider} />
-              <Text style={styles.smallLabel}>Bank Details</Text>
-              <View style={styles.bankGrid}>
-                {docSettings?.bank_account_name && (
-                  <View style={styles.bankItem}>
-                    <Text style={styles.bankLabel}>Account Name</Text>
-                    <Text style={styles.bankValue}>{docSettings.bank_account_name}</Text>
-                  </View>
+          {docSettings?.bank_account_number ? (
+            <View style={s.noteBlock}>
+              <View style={s.divider} />
+              <Text style={[s.noteLabel, { marginTop: 12 }]}>Bank Details</Text>
+              <View style={s.bankGrid}>
+                {docSettings.bank_account_name && (
+                  <View style={s.bankItem}><Text style={s.bankLabel}>Account Name</Text><Text style={s.bankValue}>{docSettings.bank_account_name}</Text></View>
                 )}
-                {docSettings?.bank_name && (
-                  <View style={styles.bankItem}>
-                    <Text style={styles.bankLabel}>Bank</Text>
-                    <Text style={styles.bankValue}>{docSettings.bank_name}</Text>
-                  </View>
+                {docSettings.bank_name && (
+                  <View style={s.bankItem}><Text style={s.bankLabel}>Bank</Text><Text style={s.bankValue}>{docSettings.bank_name}</Text></View>
                 )}
-                {docSettings?.bank_account_number && (
-                  <View style={styles.bankItem}>
-                    <Text style={styles.bankLabel}>Account Number</Text>
-                    <Text style={styles.bankValue}>{docSettings.bank_account_number}</Text>
-                  </View>
+                {docSettings.bank_account_number && (
+                  <View style={s.bankItem}><Text style={s.bankLabel}>Account Number</Text><Text style={s.bankValue}>{docSettings.bank_account_number}</Text></View>
                 )}
-                {docSettings?.bank_ifsc && (
-                  <View style={styles.bankItem}>
-                    <Text style={styles.bankLabel}>IFSC</Text>
-                    <Text style={styles.bankValue}>{docSettings.bank_ifsc}</Text>
-                  </View>
+                {docSettings.bank_ifsc && (
+                  <View style={s.bankItem}><Text style={s.bankLabel}>IFSC</Text><Text style={s.bankValue}>{docSettings.bank_ifsc}</Text></View>
                 )}
-                {docSettings?.bank_upi && (
-                  <View style={styles.bankItem}>
-                    <Text style={styles.bankLabel}>UPI</Text>
-                    <Text style={styles.bankValue}>{docSettings.bank_upi}</Text>
-                  </View>
+                {docSettings.bank_upi && (
+                  <View style={s.bankItem}><Text style={s.bankLabel}>UPI</Text><Text style={s.bankValue}>{docSettings.bank_upi}</Text></View>
                 )}
               </View>
             </View>
-          )}
+          ) : null}
 
           {/* Footer */}
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Thank you for your business.</Text>
-            <Text style={styles.footerBrand}>{company?.company_name?.toUpperCase() ?? "SHREEDHAR SALES"}</Text>
+          <View style={s.footer}>
+            <Text style={s.footerLeft}>Thank you for your business.</Text>
+            <Text style={s.footerRight}>{companyName.toUpperCase()}</Text>
           </View>
         </View>
 
         {/* Page number */}
-        <Text
-          style={styles.pageNumber}
-          render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
-          fixed
-        />
+        <Text style={s.pageNum} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} fixed />
+
       </Page>
     </Document>
   );
