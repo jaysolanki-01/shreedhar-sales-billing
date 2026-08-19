@@ -10,6 +10,7 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Phone, Mail, MapPin, FileText, Receipt, ArrowLeft, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 interface Props {
   customer: Customer;
@@ -30,7 +31,13 @@ export function CustomerProfileContent({ customer, quotations, invoices }: Props
   async function handleDelete() {
     setDeleting(true);
     const supabase = createClient();
-    await supabase.from("customers").delete().eq("id", customer.id);
+    const { error } = await supabase.from("customers").delete().eq("id", customer.id);
+    if (error) {
+      toast.error("Cannot delete — customer has linked quotations or invoices");
+      setDeleting(false);
+      setDeleteConfirm(false);
+      return;
+    }
     router.push("/customers");
     router.refresh();
   }
@@ -93,10 +100,11 @@ export function CustomerProfileContent({ customer, quotations, invoices }: Props
       </Card>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <StatCard label="Quotations" value={quotations.length.toString()} />
         <StatCard label="Invoices" value={invoices.length.toString()} />
         <StatCard label="Total Billed" value={formatCurrency(totalBilling)} />
+        <StatCard label="Amount Paid" value={formatCurrency(amountPaid)} />
         <StatCard label="Pending" value={formatCurrency(pendingAmount)} warn />
       </div>
 

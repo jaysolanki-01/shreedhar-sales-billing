@@ -36,6 +36,7 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
   const [paying, setPaying] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deletePaymentId, setDeletePaymentId] = useState<string | null>(null);
   const router = useRouter();
   const customer = invoice.customers as any;
 
@@ -101,10 +102,15 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
   }
 
   async function deletePayment(paymentId: string) {
-    if (!confirm("Remove this payment?")) return;
     const supabase = createClient();
-    await supabase.from("payments").delete().eq("id", paymentId);
+    const { error } = await supabase.from("payments").delete().eq("id", paymentId);
+    if (error) {
+      toast.error("Failed to remove payment");
+      setDeletePaymentId(null);
+      return;
+    }
     setPayments((prev) => prev.filter((p) => p.id !== paymentId));
+    setDeletePaymentId(null);
     const { data: updated } = await supabase.from("invoices").select("*, customers(*), invoice_items(*)").eq("id", invoice.id).single();
     if (updated) setInvoice(updated as any);
     toast.success("Payment removed");
@@ -368,9 +374,17 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
                   <p className="text-sm font-semibold text-brand-dark">{formatCurrency(Number(p.amount))}</p>
                   <p className="text-xs text-brand-muted">{formatDate(p.payment_date)} · {paymentMethodLabel(p.payment_method)}{p.reference_number ? ` · Ref: ${p.reference_number}` : ""}</p>
                 </div>
-                <Button variant="ghost" size="icon-sm" onClick={() => deletePayment(p.id)} title="Remove payment">
-                  <span className="text-xs text-red-500">✕</span>
-                </Button>
+                {deletePaymentId === p.id ? (
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-red-600">Remove?</span>
+                    <Button size="sm" variant="outline" onClick={() => setDeletePaymentId(null)} className="text-xs py-0.5 px-2">Cancel</Button>
+                    <Button size="sm" variant="outline" onClick={() => deletePayment(p.id)} className="border-red-300 text-red-600 hover:bg-red-50 text-xs py-0.5 px-2">Yes</Button>
+                  </div>
+                ) : (
+                  <Button variant="ghost" size="icon-sm" onClick={() => setDeletePaymentId(p.id)} title="Remove payment">
+                    <span className="text-xs text-red-500">✕</span>
+                  </Button>
+                )}
               </div>
             ))}
           </div>
@@ -397,7 +411,7 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
               <DialogClose asChild>
                 <Button variant="outline" size="md">Cancel</Button>
               </DialogClose>
-              <Button variant="primary" size="md" loading={paying} onClick={recordPayment} disabled={!payAmount || parseFloat(payAmount) <= 0}>
+              <Button variant="primary" size="md" loading={paying} onClick={recordPayment} disabled={!payAmount || parseFloat(payAmount) <= 0 || parseFloat(payAmount) > Number(invoice.balance_due)}>
                 Record Payment
               </Button>
             </div>

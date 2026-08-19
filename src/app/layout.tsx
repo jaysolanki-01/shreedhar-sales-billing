@@ -32,8 +32,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               fontFamily: "var(--font-lexend), sans-serif",
               borderRadius: "10px",
               fontSize: "13px",
-              border: "1px solid #E0E7FF",
-              boxShadow: "0 8px 24px rgba(79,70,229,0.12)",
+              border: "1px solid #E5E7EB",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
             },
           }}
         />

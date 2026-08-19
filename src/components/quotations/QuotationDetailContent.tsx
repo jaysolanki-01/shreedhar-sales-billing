@@ -60,6 +60,7 @@ export function QuotationDetailContent({ quotation: initial, company, docSetting
             : null,
           notes: quotation.notes,
           terms: docSettings?.inv_terms ?? quotation.terms,
+          prepared_by: quotation.prepared_by,
         })
         .select()
         .single();
