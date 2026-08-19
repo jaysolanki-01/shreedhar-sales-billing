@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, FileText, ChevronRight, Download } from "lucide-react";
+import { Search, FileText, Download } from "lucide-react";
 import { Quotation, QuotationStatus } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { QuotationStatusBadge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
+import { useOwnerId } from "@/lib/use-owner";
 
 const STATUS_FILTERS: { label: string; value: QuotationStatus | "all" }[] = [
   { label: "All", value: "all" },
@@ -18,9 +19,26 @@ const STATUS_FILTERS: { label: string; value: QuotationStatus | "all" }[] = [
   { label: "Expired", value: "expired" },
 ];
 
-export function QuotationsContent({ quotations }: { quotations: Quotation[] }) {
+export function QuotationsContent() {
+  const userId = useOwnerId();
+  const [quotations, setQuotations] = useState<Quotation[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<QuotationStatus | "all">("all");
+
+  useEffect(() => {
+    if (!userId) return;
+    const supabase = createClient();
+    supabase
+      .from("quotations")
+      .select("*, customers(name, company_name)")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        setQuotations((data as Quotation[]) ?? []);
+        setLoading(false);
+      });
+  }, [userId]);
 
   const filtered = quotations.filter((q) => {
     const matchSearch = search
@@ -44,15 +62,13 @@ export function QuotationsContent({ quotations }: { quotations: Quotation[] }) {
             className="w-full h-9 rounded-md border border-brand-border bg-surface pl-9 pr-3 text-sm text-brand-dark placeholder:text-brand-placeholder focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown"
           />
         </div>
-        <div className="flex gap-1 bg-brand-beige rounded-lg p-1">
+        <div className="flex gap-1 bg-brand-beige rounded-lg p-1 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
           {STATUS_FILTERS.map((f) => (
             <button
               key={f.value}
               onClick={() => setStatusFilter(f.value)}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                statusFilter === f.value
-                  ? "bg-brand-dark text-brand-gold"
-                  : "text-brand-muted hover:text-brand-dark"
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
+                statusFilter === f.value ? "bg-brand-dark text-brand-gold" : "text-brand-muted hover:text-brand-dark"
               }`}
             >
               {f.label}
@@ -61,7 +77,9 @@ export function QuotationsContent({ quotations }: { quotations: Quotation[] }) {
         </div>
       </div>
 
-      {filtered.length === 0 ? (
+      {loading ? (
+        <div className="py-16 text-center text-sm text-brand-muted">Loading…</div>
+      ) : filtered.length === 0 ? (
         <EmptyState
           icon={<FileText className="h-6 w-6" />}
           title={search || statusFilter !== "all" ? "No quotations match your filter" : "No quotations yet"}
@@ -70,14 +88,8 @@ export function QuotationsContent({ quotations }: { quotations: Quotation[] }) {
         />
       ) : (
         <div className="bg-surface rounded-xl border border-brand-border shadow-card overflow-hidden">
-          {/* Table header */}
           <div className="hidden lg:grid grid-cols-[2fr_2fr_1fr_1.5fr_1fr_auto] gap-4 px-5 py-3 border-b border-brand-border bg-brand-beige text-xs font-semibold text-brand-muted uppercase tracking-wide">
-            <span>Quotation</span>
-            <span>Customer</span>
-            <span>Date</span>
-            <span>Amount</span>
-            <span>Status</span>
-            <span></span>
+            <span>Quotation</span><span>Customer</span><span>Date</span><span>Amount</span><span>Status</span><span></span>
           </div>
           <div className="divide-y divide-brand-border">
             {filtered.map((q) => (
@@ -88,9 +100,7 @@ export function QuotationsContent({ quotations }: { quotations: Quotation[] }) {
                   </div>
                   <span className="text-sm font-semibold text-brand-dark">{q.quotation_number}</span>
                 </Link>
-                <Link href={`/quotations/${q.id}`} className="text-sm text-brand-dark truncate hidden lg:block">
-                  {(q.customers as any)?.name ?? "—"}
-                </Link>
+                <Link href={`/quotations/${q.id}`} className="text-sm text-brand-dark truncate hidden lg:block">{(q.customers as any)?.name ?? "—"}</Link>
                 <Link href={`/quotations/${q.id}`} className="text-sm text-brand-muted hidden lg:block">{formatDate(q.date)}</Link>
                 <Link href={`/quotations/${q.id}`} className="text-sm font-semibold text-brand-dark ml-auto lg:ml-0">{formatCurrency(Number(q.grand_total))}</Link>
                 <div className="hidden lg:block"><QuotationStatusBadge status={q.status} /></div>

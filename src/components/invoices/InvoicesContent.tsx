@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, Receipt, ChevronRight } from "lucide-react";
 import { Invoice, InvoicePaymentStatus } from "@/types";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { PaymentStatusBadge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { createClient } from "@/lib/supabase/client";
+import { useOwnerId } from "@/lib/use-owner";
 
 const STATUS_FILTERS: { label: string; value: InvoicePaymentStatus | "all" }[] = [
   { label: "All", value: "all" },
@@ -16,9 +18,26 @@ const STATUS_FILTERS: { label: string; value: InvoicePaymentStatus | "all" }[] =
   { label: "Overdue", value: "overdue" },
 ];
 
-export function InvoicesContent({ invoices }: { invoices: Invoice[] }) {
+export function InvoicesContent() {
+  const userId = useOwnerId();
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<InvoicePaymentStatus | "all">("all");
+
+  useEffect(() => {
+    if (!userId) return;
+    const supabase = createClient();
+    supabase
+      .from("invoices")
+      .select("*, customers(name, company_name)")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        setInvoices((data as Invoice[]) ?? []);
+        setLoading(false);
+      });
+  }, [userId]);
 
   const filtered = invoices.filter((inv) => {
     const matchSearch = search
@@ -44,15 +63,13 @@ export function InvoicesContent({ invoices }: { invoices: Invoice[] }) {
             className="w-full h-9 rounded-md border border-brand-border bg-surface pl-9 pr-3 text-sm text-brand-dark placeholder:text-brand-placeholder focus:outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown"
           />
         </div>
-        <div className="flex gap-1 bg-brand-beige rounded-lg p-1">
+        <div className="flex gap-1 bg-brand-beige rounded-lg p-1 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
           {STATUS_FILTERS.map((f) => (
             <button
               key={f.value}
               onClick={() => setStatusFilter(f.value)}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                statusFilter === f.value
-                  ? "bg-brand-dark text-brand-gold"
-                  : "text-brand-muted hover:text-brand-dark"
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
+                statusFilter === f.value ? "bg-brand-dark text-brand-gold" : "text-brand-muted hover:text-brand-dark"
               }`}
             >
               {f.label}
@@ -67,7 +84,9 @@ export function InvoicesContent({ invoices }: { invoices: Invoice[] }) {
         </div>
       )}
 
-      {filtered.length === 0 ? (
+      {loading ? (
+        <div className="py-16 text-center text-sm text-brand-muted">Loading…</div>
+      ) : filtered.length === 0 ? (
         <EmptyState
           icon={<Receipt className="h-6 w-6" />}
           title={search || statusFilter !== "all" ? "No invoices match your filter" : "No invoices yet"}
@@ -77,13 +96,7 @@ export function InvoicesContent({ invoices }: { invoices: Invoice[] }) {
       ) : (
         <div className="bg-surface rounded-xl border border-brand-border shadow-card overflow-hidden">
           <div className="hidden lg:grid grid-cols-[2fr_2fr_1fr_1.5fr_1.5fr_1fr_auto] gap-4 px-5 py-3 border-b border-brand-border bg-brand-beige text-xs font-semibold text-brand-muted uppercase tracking-wide">
-            <span>Invoice</span>
-            <span>Customer</span>
-            <span>Date</span>
-            <span>Amount</span>
-            <span>Balance</span>
-            <span>Status</span>
-            <span></span>
+            <span>Invoice</span><span>Customer</span><span>Date</span><span>Amount</span><span>Balance</span><span>Status</span><span></span>
           </div>
           <div className="divide-y divide-brand-border">
             {filtered.map((inv) => (
@@ -98,14 +111,10 @@ export function InvoicesContent({ invoices }: { invoices: Invoice[] }) {
                   </div>
                   <span className="text-sm font-semibold text-brand-dark">{inv.invoice_number}</span>
                 </div>
-                <span className="text-sm text-brand-dark truncate hidden lg:block">
-                  {(inv.customers as any)?.name ?? "—"}
-                </span>
+                <span className="text-sm text-brand-dark truncate hidden lg:block">{(inv.customers as any)?.name ?? "—"}</span>
                 <span className="text-sm text-brand-muted hidden lg:block">{formatDate(inv.date)}</span>
                 <span className="text-sm font-semibold text-brand-dark ml-auto lg:ml-0">{formatCurrency(Number(inv.grand_total))}</span>
-                <span className="text-sm text-brand-muted hidden lg:block">
-                  {Number(inv.balance_due) > 0 ? formatCurrency(Number(inv.balance_due)) : "—"}
-                </span>
+                <span className="text-sm text-brand-muted hidden lg:block">{Number(inv.balance_due) > 0 ? formatCurrency(Number(inv.balance_due)) : "—"}</span>
                 <div className="hidden lg:block"><PaymentStatusBadge status={inv.payment_status} /></div>
                 <ChevronRight className="h-4 w-4 text-brand-muted opacity-0 group-hover:opacity-100 transition-opacity hidden lg:block" />
               </Link>

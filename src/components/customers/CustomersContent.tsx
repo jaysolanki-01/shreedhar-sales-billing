@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Search, User, Phone, Mail, Building2, ChevronRight, Edit2, Trash2 } from "lucide-react";
 import { Customer } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -11,14 +11,19 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useOwnerId } from "@/lib/use-owner";
 
-interface Props {
-  customers: Customer[];
-  userId: string;
-}
+export function CustomersContent() {
+  const userId = useOwnerId();
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export function CustomersContent({ customers: initial, userId }: Props) {
-  const [customers, setCustomers] = useState(initial);
+  useEffect(() => {
+    if (!userId) return;
+    const supabase = createClient();
+    supabase.from("customers").select("*").eq("user_id", userId).order("name")
+      .then(({ data }) => { setCustomers((data as Customer[]) ?? []); setLoading(false); });
+  }, [userId]);
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editCustomer, setEditCustomer] = useState<Customer | null>(null);
@@ -86,7 +91,9 @@ export function CustomersContent({ customers: initial, userId }: Props) {
         </Button>
       </div>
 
-      {filtered.length === 0 ? (
+      {loading ? (
+        <div className="py-16 text-center text-sm text-brand-muted">Loading…</div>
+      ) : filtered.length === 0 ? (
         <EmptyState
           icon={<User className="h-6 w-6" />}
           title={search ? "No customers match your search" : "No customers yet"}
