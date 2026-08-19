@@ -75,6 +75,7 @@ interface Props {
   invoice: Invoice & { invoice_items: any[]; customers: any };
   company: CompanySettings | null;
   docSettings: DocSettings | null;
+  logoBase64?: string | null;
 }
 
 export function InvoicePDF({ invoice, company, docSettings }: Props) {
