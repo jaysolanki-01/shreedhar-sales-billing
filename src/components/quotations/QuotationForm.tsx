@@ -178,7 +178,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
     const { data: created, error } = await supabase
       .from("customers")
       .insert({ ...data, user_id: userId })
-      .select("id, name, company_name, address, gstin")
+      .select("id, name, company_name, address, ship_to_address, gstin")
       .single();
     if (error) { toast.error("Failed to add customer"); return; }
     setCustomers((prev) => [...prev, created]);

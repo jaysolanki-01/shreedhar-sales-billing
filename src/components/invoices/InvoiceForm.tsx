@@ -156,7 +156,7 @@ export function InvoiceForm({ customers: initialCustomers, defaultSettings, user
 
   async function handleAddCustomer(data: any) {
     const supabase = createClient();
-    const { data: created, error } = await supabase.from("customers").insert({ ...data, user_id: userId }).select("id, name, company_name, address, gstin").single();
+    const { data: created, error } = await supabase.from("customers").insert({ ...data, user_id: userId }).select("id, name, company_name, address, ship_to_address, gstin").single();
     if (error) { toast.error("Failed to add customer"); return; }
     setCustomers((prev) => [...prev, created]);
     setValue("customer_id", created.id);
