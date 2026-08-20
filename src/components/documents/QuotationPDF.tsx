@@ -587,7 +587,7 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
         </View>
 
         {/* ── Terms + Authorised Signatory ── */}
-        <View style={s.termsRow}>
+        <View style={quotation.notes ? s.termsRow : [s.termsRow, { flexGrow: 1 }]}>
           <View style={s.termsLeft}>
             <Text style={s.termsLabel}>Terms & Conditions:</Text>
             {quotation.terms
@@ -601,11 +601,11 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
           </View>
         </View>
 
-        {/* Notes (if any) */}
+        {/* Notes (if any) — grows to fill remaining space when present */}
         {quotation.notes ? (
           <View style={{
             borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, ...BD,
-            padding: 8,
+            padding: 8, flexGrow: 1,
           }}>
             <Text style={[s.termsLabel, { marginBottom: 3 }]}>Notes:</Text>
             <Text style={s.termsText}>{quotation.notes}</Text>
