@@ -434,9 +434,11 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
             <Text style={s.custLabel}>Ship To</Text>
             <Text style={s.custName}>{customer?.name ?? "—"}</Text>
             {customer?.company_name && <Text style={s.custLine}>{customer.company_name}</Text>}
-            {customer?.address      && <Text style={s.custLine}>{customer.address}</Text>}
-            {customer?.phone        && <Text style={s.custLine}>{customer.phone}</Text>}
-            {customer?.gstin        && <Text style={s.custGstin}>GSTIN: {customer.gstin}</Text>}
+            {(customer?.ship_to_address || customer?.address) && (
+              <Text style={s.custLine}>{customer.ship_to_address || customer.address}</Text>
+            )}
+            {customer?.phone && <Text style={s.custLine}>{customer.phone}</Text>}
+            {customer?.gstin && <Text style={s.custGstin}>GSTIN: {customer.gstin}</Text>}
           </View>
         </View>
 

@@ -18,7 +18,7 @@ import { CustomerFormDialog } from "@/components/customers/CustomerFormDialog";
 import { Plus, Save, Download } from "lucide-react";
 
 interface Props {
-  customers: Pick<Customer, "id" | "name" | "company_name" | "address" | "gstin">[];
+  customers: Pick<Customer, "id" | "name" | "company_name" | "address" | "ship_to_address" | "gstin">[];
   defaultSettings: DocSettings | null;
   userId: string;
   preselectedCustomerId?: string;

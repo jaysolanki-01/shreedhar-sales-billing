@@ -46,6 +46,7 @@ export interface Customer {
   phone: string;
   email: string;
   address: string;
+  ship_to_address: string;
   gstin: string;
   notes: string;
   created_at: string;

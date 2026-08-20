@@ -16,6 +16,7 @@ const schema = z.object({
   phone: z.string(),
   email: z.string().email("Invalid email").or(z.literal("")),
   address: z.string(),
+  ship_to_address: z.string(),
   gstin: z.string(),
   notes: z.string(),
 });
@@ -26,6 +27,7 @@ type FormData = {
   phone: string;
   email: string;
   address: string;
+  ship_to_address: string;
   gstin: string;
   notes: string;
 };
@@ -40,7 +42,7 @@ interface Props {
 export function CustomerFormDialog({ open, onOpenChange, onSave, customer }: Props) {
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema) as any,
-    defaultValues: { name: "", company_name: "", phone: "", email: "", address: "", gstin: "", notes: "" },
+    defaultValues: { name: "", company_name: "", phone: "", email: "", address: "", ship_to_address: "", gstin: "", notes: "" },
   });
 
   useEffect(() => {
@@ -51,11 +53,12 @@ export function CustomerFormDialog({ open, onOpenChange, onSave, customer }: Pro
         phone: customer.phone,
         email: customer.email,
         address: customer.address,
+        ship_to_address: customer.ship_to_address ?? "",
         gstin: customer.gstin,
         notes: customer.notes,
       });
     } else {
-      reset({ name: "", company_name: "", phone: "", email: "", address: "", gstin: "", notes: "" });
+      reset({ name: "", company_name: "", phone: "", email: "", address: "", ship_to_address: "", gstin: "", notes: "" });
     }
   }, [customer, open]);
 
@@ -73,7 +76,8 @@ export function CustomerFormDialog({ open, onOpenChange, onSave, customer }: Pro
             <Input label="Phone" placeholder="9876543210" type="tel" {...register("phone")} />
             <Input label="Email" placeholder="email@example.com" type="email" {...register("email")} error={errors.email?.message} />
           </div>
-          <Textarea label="Address" placeholder="Full address" rows={3} {...register("address")} />
+          <Textarea label="Bill To Address" placeholder="Full billing address" rows={3} {...register("address")} />
+          <Textarea label="Ship To Address" placeholder="Leave blank to use same as billing address" rows={2} {...register("ship_to_address")} />
           <Input label="GSTIN" placeholder="22AAAAA0000A1Z5" {...register("gstin")} />
           <Textarea label="Notes" placeholder="Any internal notes" rows={2} {...register("notes")} />
 
