@@ -328,6 +328,23 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
     <Document title={quotation.quotation_number} author={companyName}>
       <Page size="A4" style={s.page} wrap>
 
+        {/* ── Watermark (behind all content) ── */}
+        {logoBase64 && (
+          <View
+            fixed
+            style={{
+              position: "absolute",
+              top: 307,    // (842/2 - 100) - paddingTop(14) ≈ page center
+              left: 177.5, // (595/2 - 100) - paddingLeft(20) ≈ page center
+              width: 200,
+              height: 200,
+              opacity: 0.10,
+            }}
+          >
+            <Image src={logoBase64} style={{ width: 200, height: 200, objectFit: "contain" }} />
+          </View>
+        )}
+
         {/* ── Title ── */}
         <View style={s.titleBox}>
           <Text style={s.titleText}>Q U O T A T I O N</Text>
