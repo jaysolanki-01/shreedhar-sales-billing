@@ -22,7 +22,15 @@ export function CustomersContent() {
     if (!userId) return;
     const supabase = createClient();
     supabase.from("customers").select("*").eq("user_id", userId).order("name")
-      .then(({ data }) => { setCustomers((data as Customer[]) ?? []); setLoading(false); });
+      .then(({ data, error }) => {
+        if (error) {
+          toast.error("Could not load customers — your session may have expired. Please refresh.");
+          setLoading(false);
+          return;
+        }
+        setCustomers((data as Customer[]) ?? []);
+        setLoading(false);
+      });
   }, [userId]);
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -52,7 +60,11 @@ export function CustomersContent() {
         .insert({ ...data, user_id: userId })
         .select()
         .single();
-      if (error) { toast.error(error.message || error.details || error.code || "Failed to add customer"); return; }
+      if (error) {
+        const msg = error.message || error.details || error.hint || error.code;
+        toast.error(msg ? `Failed to add customer: ${msg}` : "Failed to add customer — your session may have expired. Please refresh.");
+        return;
+      }
       setCustomers((prev) => [...prev, created]);
       toast.success("Customer added");
     }

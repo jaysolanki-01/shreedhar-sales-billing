@@ -34,7 +34,14 @@ export function QuotationsContent() {
       .select("*, customers(name, company_name)")
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (error) {
+          import("sonner").then(({ toast }) =>
+            toast.error("Could not load quotations — your session may have expired. Please refresh.")
+          );
+          setLoading(false);
+          return;
+        }
         setQuotations((data as Quotation[]) ?? []);
         setLoading(false);
       });

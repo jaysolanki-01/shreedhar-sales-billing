@@ -33,7 +33,14 @@ export function InvoicesContent() {
       .select("*, customers(name, company_name)")
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (error) {
+          import("sonner").then(({ toast }) =>
+            toast.error("Could not load invoices — your session may have expired. Please refresh.")
+          );
+          setLoading(false);
+          return;
+        }
         setInvoices((data as Invoice[]) ?? []);
         setLoading(false);
       });
