@@ -26,20 +26,20 @@ const C = {
   white:  "#FFFFFF",
 };
 
-const PX = 20; // page horizontal padding
+const PX = 18; // page horizontal padding
 
-// Column widths — total must equal 595 - PX*2 = 555pt
+// Column widths — total must equal 595 - PX*2 = 559pt
 const W = {
   sr:      22,
-  desc:    150,
+  desc:    152,
   qty:     42,
   rate:    56,
   disc:    54,
-  taxable: 65,
+  taxable: 66,
   sgst:    57,
   cgst:    57,
-  amt:     52,
-  // 22+150+42+56+54+65+57+57+52 = 555 ✓
+  amt:     53,
+  // 22+152+42+56+54+66+57+57+53 = 559 ✓
 };
 
 function n(x: number, d = 2) {
@@ -67,19 +67,19 @@ const s = StyleSheet.create({
     fontSize: 7.5,
     color: C.dark,
     paddingHorizontal: PX,
-    paddingTop: 14,
-    paddingBottom: 28,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
 
   // ── Title ──────────────────────────────────────────────────────
   titleBox: {
     borderWidth: 1.5, ...BD,
-    paddingVertical: 9,
+    paddingVertical: 6,
     alignItems: "center",
     marginBottom: 0,
   },
   titleText: {
-    color: C.black, fontSize: 15, fontFamily: "Roboto", fontWeight: 700,
+    color: C.black, fontSize: 14, fontFamily: "Roboto", fontWeight: 700,
     letterSpacing: 4,
   },
 
@@ -89,27 +89,27 @@ const s = StyleSheet.create({
     flexDirection: "row",
   },
   headerLeft: {
-    flex: 1, padding: 10,
+    flex: 1, padding: 8,
     borderRightWidth: 1, ...BD,
-    flexDirection: "row", gap: 8,
+    flexDirection: "row", gap: 7,
   },
   logoBox: {
-    width: 42, height: 42, flexShrink: 0, overflow: "hidden",
+    width: 38, height: 38, flexShrink: 0, overflow: "hidden",
     backgroundColor: C.bg,
     alignItems: "center", justifyContent: "center",
     borderWidth: 1, ...BD, borderRadius: 2,
   },
-  logoImg:  { width: 42, height: 42, objectFit: "contain" },
-  logoChar: { color: C.dark, fontSize: 16, fontFamily: "Roboto", fontWeight: 700 },
-  companyName: { color: C.black, fontSize: 10.5, fontFamily: "Roboto", fontWeight: 700, marginBottom: 2 },
-  companyLine: { color: C.mid, fontSize: 7, marginBottom: 1.5, lineHeight: 1.4 },
-  companyGstin: { color: C.dark, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700, marginTop: 3 },
+  logoImg:  { width: 38, height: 38, objectFit: "contain" },
+  logoChar: { color: C.dark, fontSize: 15, fontFamily: "Roboto", fontWeight: 700 },
+  companyName: { color: C.black, fontSize: 10, fontFamily: "Roboto", fontWeight: 700, marginBottom: 2 },
+  companyLine: { color: C.mid, fontSize: 7, marginBottom: 1, lineHeight: 1.3 },
+  companyGstin: { color: C.dark, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700, marginTop: 2 },
 
-  headerRight: { width: 190, padding: 10 },
+  headerRight: { width: 185, padding: 8 },
   metaRow: {
     flexDirection: "row",
     borderBottomWidth: 1, ...BD,
-    paddingBottom: 4, marginBottom: 4,
+    paddingBottom: 3, marginBottom: 3,
   },
   metaRowLast: { flexDirection: "row" },
   metaLabel:   { color: C.slate, fontSize: 7.5, width: 76 },
@@ -118,7 +118,7 @@ const s = StyleSheet.create({
   // ── Place of supply ────────────────────────────────────────────
   placeRow: {
     borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, ...BD,
-    paddingVertical: 4, paddingHorizontal: 10,
+    paddingVertical: 3, paddingHorizontal: 8,
     flexDirection: "row", gap: 4,
   },
   placeLabel: { color: C.slate, fontSize: 7.5 },
@@ -129,7 +129,7 @@ const s = StyleSheet.create({
     borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, ...BD,
     flexDirection: "row",
   },
-  customerCol: { flex: 1, padding: 8 },
+  customerCol: { flex: 1, padding: 6 },
   customerDivider: { borderRightWidth: 1, ...BD },
   custLabel: {
     color: C.dark, fontSize: 7, fontFamily: "Roboto", fontWeight: 700,
@@ -161,23 +161,23 @@ const s = StyleSheet.create({
 
   th: {
     fontSize: 7, fontFamily: "Roboto", fontWeight: 700,
-    paddingVertical: 6, paddingHorizontal: 3,
+    paddingVertical: 5, paddingHorizontal: 3,
     borderRightWidth: 1, ...BD,
     textAlign: "center",
   },
   thLast: {
     fontSize: 7, fontFamily: "Roboto", fontWeight: 700,
-    paddingVertical: 6, paddingHorizontal: 4,
+    paddingVertical: 5, paddingHorizontal: 4,
     textAlign: "right",
   },
   td: {
     fontSize: 7.5,
-    paddingVertical: 7, paddingHorizontal: 3,
+    paddingVertical: 5, paddingHorizontal: 3,
     borderRightWidth: 1, ...BD,
   },
   tdLast: {
     fontSize: 7.5,
-    paddingVertical: 7, paddingHorizontal: 4,
+    paddingVertical: 5, paddingHorizontal: 4,
     textAlign: "right",
   },
   tdBold:   { fontFamily: "Roboto", fontWeight: 700 },
@@ -202,7 +202,7 @@ const s = StyleSheet.create({
   },
   taxTitle: {
     backgroundColor: C.bg,
-    textAlign: "center", paddingVertical: 5,
+    textAlign: "center", paddingVertical: 4,
     fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700,
     borderBottomWidth: 1, ...BD,
   },
@@ -214,22 +214,22 @@ const s = StyleSheet.create({
   taxDataRow: { flexDirection: "row" },
   taxTh: {
     flex: 1, fontSize: 7, fontFamily: "Roboto", fontWeight: 700,
-    paddingVertical: 5, paddingHorizontal: 6,
+    paddingVertical: 4, paddingHorizontal: 6,
     borderRightWidth: 1, ...BD,
     textAlign: "center",
   },
   taxThLast: {
     flex: 1, fontSize: 7, fontFamily: "Roboto", fontWeight: 700,
-    paddingVertical: 5, paddingHorizontal: 6,
+    paddingVertical: 4, paddingHorizontal: 6,
     textAlign: "right",
   },
   taxTd: {
     flex: 1, fontSize: 7.5,
-    paddingVertical: 5, paddingHorizontal: 6,
+    paddingVertical: 4, paddingHorizontal: 6,
     borderRightWidth: 1, ...BD,
     textAlign: "right",
   },
-  taxTdLast: { flex: 1, fontSize: 7.5, paddingVertical: 5, paddingHorizontal: 6, textAlign: "right" },
+  taxTdLast: { flex: 1, fontSize: 7.5, paddingVertical: 4, paddingHorizontal: 6, textAlign: "right" },
   taxTdCenter: { textAlign: "center" },
 
   // ── Bottom: Words + Bank | Summary ─────────────────────────────
@@ -237,39 +237,39 @@ const s = StyleSheet.create({
     borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, ...BD,
     flexDirection: "row",
   },
-  bottomLeft: { flex: 1, padding: 8, borderRightWidth: 1, ...BD },
-  bottomRight: { width: 190 },
+  bottomLeft: { flex: 1, padding: 6, borderRightWidth: 1, ...BD },
+  bottomRight: { width: 185 },
 
-  wordsTitle: { color: C.slate, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700, marginBottom: 3 },
-  wordsValue: { color: C.dark, fontSize: 8, fontFamily: "Roboto", fontWeight: 700, lineHeight: 1.4 },
-  bankSection: { marginTop: 8, paddingTop: 6, borderTopWidth: 1, ...BD },
-  bankTitle: { color: C.slate, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700, marginBottom: 4 },
-  bankRow: { flexDirection: "row", marginBottom: 2.5 },
+  wordsTitle: { color: C.slate, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700, marginBottom: 2 },
+  wordsValue: { color: C.dark, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700, lineHeight: 1.4 },
+  bankSection: { marginTop: 6, paddingTop: 5, borderTopWidth: 1, ...BD },
+  bankTitle: { color: C.slate, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700, marginBottom: 3 },
+  bankRow: { flexDirection: "row", marginBottom: 2 },
   bankLabel: { color: C.slate, fontSize: 7, width: 66 },
   bankValue: { color: C.dark,  fontSize: 7, fontFamily: "Roboto", fontWeight: 700 },
 
   sumRow: {
     flexDirection: "row", justifyContent: "space-between",
-    paddingVertical: 4, paddingHorizontal: 8,
+    paddingVertical: 3, paddingHorizontal: 7,
     borderBottomWidth: 1, ...BD,
   },
   sumLabel: { color: C.mid, fontSize: 7.5 },
   sumValue: { color: C.dark, fontSize: 7.5 },
   sumRowGrand: {
     flexDirection: "row", justifyContent: "space-between",
-    paddingVertical: 7, paddingHorizontal: 8,
+    paddingVertical: 6, paddingHorizontal: 7,
     backgroundColor: C.black,
   },
-  sumGrandLabel: { color: C.white, fontSize: 8.5, fontFamily: "Roboto", fontWeight: 700 },
-  sumGrandValue: { color: C.white, fontSize: 10,  fontFamily: "Roboto", fontWeight: 700 },
+  sumGrandLabel: { color: C.white, fontSize: 8, fontFamily: "Roboto", fontWeight: 700 },
+  sumGrandValue: { color: C.white, fontSize: 9.5, fontFamily: "Roboto", fontWeight: 700 },
 
   // ── Terms + Signatory ──────────────────────────────────────────
   termsRow: {
     borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, ...BD,
-    flexDirection: "row", minHeight: 52,
+    flexDirection: "row", minHeight: 40,
   },
-  termsLeft:  { flex: 1, padding: 8, borderRightWidth: 1, ...BD },
-  termsRight: { width: 190, padding: 8, alignItems: "flex-end", justifyContent: "space-between" },
+  termsLeft:  { flex: 1, padding: 6, borderRightWidth: 1, ...BD },
+  termsRight: { width: 185, padding: 6, alignItems: "flex-end", justifyContent: "space-between" },
   termsLabel: {
     color: C.mid, fontSize: 7, fontFamily: "Roboto", fontWeight: 700,
     textTransform: "uppercase", marginBottom: 3,
@@ -281,7 +281,7 @@ const s = StyleSheet.create({
 
   // ── Footer ─────────────────────────────────────────────────────
   footerBar: {
-    marginTop: 8, flexDirection: "row",
+    marginTop: 5, flexDirection: "row",
     justifyContent: "space-between", alignItems: "center",
   },
   footerLeft:  { color: C.light, fontSize: 6.5 },
@@ -334,8 +334,8 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
             fixed
             style={{
               position: "absolute",
-              top: 307,    // (842/2 - 100) - paddingTop(14) ≈ page center
-              left: 177.5, // (595/2 - 100) - paddingLeft(20) ≈ page center
+              top: 311,    // (842/2 - 100) - paddingTop(10)
+              left: 179.5, // (595/2 - 100) - paddingLeft(18)
               width: 200,
               height: 200,
               opacity: 0.10,
@@ -470,18 +470,18 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
             );
           })}
 
-          {/* Blank filler rows — fill table to minimum 10 rows (standard invoice look) */}
-          {Array.from({ length: Math.max(0, 10 - items.length) }).map((_, idx) => (
+          {/* Blank filler rows — minimum 5 rows for a clean look */}
+          {Array.from({ length: Math.max(0, 5 - items.length) }).map((_, idx) => (
             <View key={`empty-${idx}`} style={s.tableRow}>
-              <View style={[s.td, s.wSr,      { paddingVertical: 9 }]}><Text> </Text></View>
-              <View style={[s.td, s.wDesc,     { paddingVertical: 9 }]}><Text> </Text></View>
-              <View style={[s.td, s.wQty,      { paddingVertical: 9 }]}><Text> </Text></View>
-              <View style={[s.td, s.wRate,     { paddingVertical: 9 }]}><Text> </Text></View>
-              <View style={[s.td, s.wDisc,     { paddingVertical: 9 }]}><Text> </Text></View>
-              <View style={[s.td, s.wTaxable,  { paddingVertical: 9 }]}><Text> </Text></View>
-              <View style={[s.td, s.wSgst,     { paddingVertical: 9 }]}><Text> </Text></View>
-              <View style={[s.td, s.wCgst,     { paddingVertical: 9 }]}><Text> </Text></View>
-              <View style={[s.tdLast, s.wAmt,  { paddingVertical: 9 }]}><Text> </Text></View>
+              <View style={[s.td, s.wSr,      { paddingVertical: 6 }]}><Text> </Text></View>
+              <View style={[s.td, s.wDesc,     { paddingVertical: 6 }]}><Text> </Text></View>
+              <View style={[s.td, s.wQty,      { paddingVertical: 6 }]}><Text> </Text></View>
+              <View style={[s.td, s.wRate,     { paddingVertical: 6 }]}><Text> </Text></View>
+              <View style={[s.td, s.wDisc,     { paddingVertical: 6 }]}><Text> </Text></View>
+              <View style={[s.td, s.wTaxable,  { paddingVertical: 6 }]}><Text> </Text></View>
+              <View style={[s.td, s.wSgst,     { paddingVertical: 6 }]}><Text> </Text></View>
+              <View style={[s.td, s.wCgst,     { paddingVertical: 6 }]}><Text> </Text></View>
+              <View style={[s.tdLast, s.wAmt,  { paddingVertical: 6 }]}><Text> </Text></View>
             </View>
           ))}
 
