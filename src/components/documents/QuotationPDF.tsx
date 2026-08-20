@@ -440,10 +440,9 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
             const halfRate = Number(item.gst_percent ?? 0) / 2;
             const discAmt  = Number(item.discount_amount ?? 0);
             const discPct  = Number(item.discount_percent ?? 0);
-            const isLast   = idx === items.length - 1;
 
             return (
-              <View key={item.id ?? idx} style={isLast ? s.tableRowLast : s.tableRow} wrap={false}>
+              <View key={item.id ?? idx} style={s.tableRow} wrap={false}>
                 <View style={[s.td, s.wSr, s.tdCenter]}><Text>{idx + 1}</Text></View>
                 <View style={[s.td, s.wDesc]}>
                   <Text style={s.tdBold}>{item.description}</Text>
@@ -470,6 +469,21 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
               </View>
             );
           })}
+
+          {/* Blank filler rows — fill table to minimum 10 rows (standard invoice look) */}
+          {Array.from({ length: Math.max(0, 10 - items.length) }).map((_, idx) => (
+            <View key={`empty-${idx}`} style={s.tableRow}>
+              <View style={[s.td, s.wSr,      { paddingVertical: 9 }]}><Text> </Text></View>
+              <View style={[s.td, s.wDesc,     { paddingVertical: 9 }]}><Text> </Text></View>
+              <View style={[s.td, s.wQty,      { paddingVertical: 9 }]}><Text> </Text></View>
+              <View style={[s.td, s.wRate,     { paddingVertical: 9 }]}><Text> </Text></View>
+              <View style={[s.td, s.wDisc,     { paddingVertical: 9 }]}><Text> </Text></View>
+              <View style={[s.td, s.wTaxable,  { paddingVertical: 9 }]}><Text> </Text></View>
+              <View style={[s.td, s.wSgst,     { paddingVertical: 9 }]}><Text> </Text></View>
+              <View style={[s.td, s.wCgst,     { paddingVertical: 9 }]}><Text> </Text></View>
+              <View style={[s.tdLast, s.wAmt,  { paddingVertical: 9 }]}><Text> </Text></View>
+            </View>
+          ))}
 
           {/* Totals row */}
           <View style={s.tableTotals}>
@@ -587,7 +601,7 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
         </View>
 
         {/* ── Terms + Authorised Signatory ── */}
-        <View style={quotation.notes ? s.termsRow : [s.termsRow, { flexGrow: 1 }]}>
+        <View style={s.termsRow}>
           <View style={s.termsLeft}>
             <Text style={s.termsLabel}>Terms & Conditions:</Text>
             {quotation.terms
@@ -605,7 +619,7 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
         {quotation.notes ? (
           <View style={{
             borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, ...BD,
-            padding: 8, flexGrow: 1,
+            padding: 8,
           }}>
             <Text style={[s.termsLabel, { marginBottom: 3 }]}>Notes:</Text>
             <Text style={s.termsText}>{quotation.notes}</Text>
