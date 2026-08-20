@@ -37,6 +37,7 @@ interface FormValues {
   items: Array<{
     id?: string;
     description: string;
+    hsn_code?: string;
     quantity: string;
     rate: string;
     discount_percent: string;
@@ -115,7 +116,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
         const itemsToInsert = computedItems.map((item, idx) => ({
           quotation_id: existingQuotation.id,
           description: item.description,
-          hsn_code: (item as any).hsn_code ?? "",
+          hsn_code: item.hsn_code ?? "",
           quantity: item.quantity,
           rate: item.rate,
           discount_percent: item.discount_percent,
@@ -152,7 +153,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
         const itemsToInsert = computedItems.map((item, idx) => ({
           quotation_id: q.id,
           description: item.description,
-          hsn_code: (item as any).hsn_code ?? "",
+          hsn_code: item.hsn_code ?? "",
           quantity: item.quantity,
           rate: item.rate,
           discount_percent: item.discount_percent,
@@ -193,7 +194,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
 
   return (
     <div className="px-4 lg:px-8 py-6 max-w-5xl mx-auto w-full">
-      <form onSubmit={handleSubmit((data) => save(data))}>
+      <form onSubmit={handleSubmit((data: FormValues) => save(data))}>
         <div className="grid lg:grid-cols-[1fr_300px] gap-6">
 
           {/* Main form */}
