@@ -25,7 +25,6 @@ export function QuotationDetailContent({ quotation: initial, company, docSetting
   const [quotation, setQuotation] = useState(initial);
   const [converting, setConverting] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
-  const [sharing, setSharing] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const router = useRouter();
@@ -110,40 +109,12 @@ export function QuotationDetailContent({ quotation: initial, company, docSetting
     }
   }
 
-  async function openWhatsApp() {
+  function openWhatsApp() {
     const phone = customer?.phone;
     if (!phone) return;
-
-    const pdfUrl = `/api/pdf/quotation/${quotation.id}`;
-    const filename = `${quotation.quotation_number}.pdf`;
-
-    // On mobile: try sharing the actual PDF file via native share sheet
-    if (typeof navigator.share === "function") {
-      try {
-        setSharing(true);
-        const res = await fetch(pdfUrl);
-        const blob = await res.blob();
-        const file = new File([blob], filename, { type: "application/pdf" });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: `Quotation ${quotation.quotation_number}`,
-            text: `Hi ${customer?.name ?? ""},\n\nPlease find your quotation *${quotation.quotation_number}* for *${formatCurrency(Number(quotation.grand_total))}* from ${company?.company_name ?? "Shreedhar Sales"}.\n\nValid until: ${formatDate(quotation.valid_until)}\n\nThank you!`,
-          });
-          setSharing(false);
-          return;
-        }
-      } catch {
-        // user cancelled or share failed — fall through
-      } finally {
-        setSharing(false);
-      }
-    }
-
-    // Desktop fallback: WhatsApp text message with link
     const digits = phone.replace(/\D/g, "");
     const wa = digits.startsWith("91") && digits.length >= 12 ? digits : `91${digits}`;
-    const pdfLink = `${window.location.origin}${pdfUrl}`;
+    const pdfLink = `${window.location.origin}/api/pdf/quotation/${quotation.id}`;
     const text = `Hi ${customer?.name ?? ""},\n\nPlease find your quotation *${quotation.quotation_number}* for *${formatCurrency(Number(quotation.grand_total))}* from ${company?.company_name ?? "Shreedhar Sales"}.\n\n📄 Download PDF: ${pdfLink}\n\nValid until: ${formatDate(quotation.valid_until)}\n\nThank you!`;
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(text)}`, "_blank");
   }
@@ -187,11 +158,10 @@ export function QuotationDetailContent({ quotation: initial, company, docSetting
             <Button
               variant="outline"
               size="md"
-              loading={sharing}
               onClick={openWhatsApp}
               className="border-green-300 text-green-700 hover:bg-green-50"
             >
-              <MessageCircle className="h-4 w-4" />{sharing ? "Preparing…" : "WhatsApp"}
+              <MessageCircle className="h-4 w-4" />WhatsApp
             </Button>
           )}
 

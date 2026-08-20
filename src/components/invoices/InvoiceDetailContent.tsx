@@ -34,50 +34,21 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
   const [payRef, setPayRef] = useState("");
   const [payNotes, setPayNotes] = useState("");
   const [paying, setPaying] = useState(false);
-  const [sharing, setSharing] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [deletePaymentId, setDeletePaymentId] = useState<string | null>(null);
   const router = useRouter();
   const customer = invoice.customers as any;
 
-  async function openWhatsApp() {
+  function openWhatsApp() {
     const phone = customer?.phone;
     if (!phone) return;
-
-    const pdfUrl = `/api/pdf/invoice/${invoice.id}`;
-    const filename = `${invoice.invoice_number}.pdf`;
+    const digits = phone.replace(/\D/g, "");
+    const wa = digits.startsWith("91") && digits.length >= 12 ? digits : `91${digits}`;
     const balanceLine = Number(invoice.balance_due) > 0
       ? `\n\nBalance Due: *${formatCurrency(Number(invoice.balance_due))}*`
       : "\n\n✅ *Fully Paid — Thank you!*";
-
-    // On mobile: try sharing the actual PDF file via native share sheet
-    if (typeof navigator.share === "function") {
-      try {
-        setSharing(true);
-        const res = await fetch(pdfUrl);
-        const blob = await res.blob();
-        const file = new File([blob], filename, { type: "application/pdf" });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: `Invoice ${invoice.invoice_number}`,
-            text: `Hi ${customer?.name ?? ""},\n\nPlease find your invoice *${invoice.invoice_number}* for *${formatCurrency(Number(invoice.grand_total))}* from ${company?.company_name ?? "Shreedhar Sales"}.${balanceLine}\n\nThank you!`,
-          });
-          setSharing(false);
-          return;
-        }
-      } catch {
-        // user cancelled or share failed — fall through
-      } finally {
-        setSharing(false);
-      }
-    }
-
-    // Desktop fallback: WhatsApp text message with link
-    const digits = phone.replace(/\D/g, "");
-    const wa = digits.startsWith("91") && digits.length >= 12 ? digits : `91${digits}`;
-    const pdfLink = `${window.location.origin}${pdfUrl}`;
+    const pdfLink = `${window.location.origin}/api/pdf/invoice/${invoice.id}`;
     const text = `Hi ${customer?.name ?? ""},\n\nPlease find your invoice *${invoice.invoice_number}* for *${formatCurrency(Number(invoice.grand_total))}* from ${company?.company_name ?? "Shreedhar Sales"}.${balanceLine}\n\n📄 Download PDF: ${pdfLink}\n\nThank you!`;
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(text)}`, "_blank");
   }
@@ -173,11 +144,10 @@ export function InvoiceDetailContent({ invoice: initial, company, docSettings, p
             <Button
               variant="outline"
               size="md"
-              loading={sharing}
               onClick={openWhatsApp}
               className="border-green-300 text-green-700 hover:bg-green-50"
             >
-              <MessageCircle className="h-4 w-4" />{sharing ? "Preparing…" : "WhatsApp"}
+              <MessageCircle className="h-4 w-4" />WhatsApp
             </Button>
           )}
           <Button variant="outline" size="md" onClick={() => window.open(`/api/pdf/invoice/${invoice.id}`, "_blank")}>
