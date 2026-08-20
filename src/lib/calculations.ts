@@ -2,6 +2,7 @@ import { DocumentItemForm } from "@/types";
 
 export interface ComputedItem {
   description: string;
+  hsn_code: string;
   quantity: number;
   rate: number;
   discount_percent: number;
@@ -39,6 +40,7 @@ export function computeItem(item: DocumentItemForm): ComputedItem {
 
   return {
     description: item.description,
+    hsn_code: item.hsn_code ?? "",
     quantity,
     rate,
     discount_percent,
