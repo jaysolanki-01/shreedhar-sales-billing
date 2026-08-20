@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectItem } from "@/components/ui/select";
 import { ItemsEditor } from "./ItemsEditor";
 import { CustomerFormDialog } from "@/components/customers/CustomerFormDialog";
-import { Plus, Eye, Download, Save } from "lucide-react";
+import { Plus, Download, Save } from "lucide-react";
 
 interface Props {
   customers: Pick<Customer, "id" | "name" | "company_name" | "address" | "gstin">[];
@@ -272,26 +272,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
                 errors={errors}
               />
 
-              {/* Totals */}
-              <div className="mt-6 flex justify-end">
-                <div className="w-full max-w-xs space-y-2">
-                  <TotalRow label="Subtotal" value={formatCurrency(totals.subtotal)} />
-                  {totals.discount_amount > 0 && (
-                    <TotalRow label="Discount" value={`-${formatCurrency(totals.discount_amount)}`} />
-                  )}
-                  {totals.discount_amount > 0 && (
-                    <TotalRow label="Taxable Amount" value={formatCurrency(totals.taxable_amount)} />
-                  )}
-                  <TotalRow label="GST" value={formatCurrency(totals.gst_amount)} />
-                  <div className="border-t border-brand-border pt-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-bold text-brand-dark">Grand Total</span>
-                      <span className="text-lg font-bold text-brand-brown">{formatCurrency(totals.grand_total)}</span>
-                    </div>
-                  </div>
-                </div>
               </div>
-            </div>
 
             {/* Notes & Terms */}
             <div className="bg-surface rounded-xl border border-brand-border shadow-card p-5 space-y-4">
@@ -300,41 +281,69 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
             </div>
           </div>
 
-          {/* Sticky sidebar actions */}
+          {/* Sticky sidebar */}
           <div className="space-y-4">
-            <div className="bg-surface rounded-xl border border-brand-border shadow-card p-5 space-y-3 lg:sticky lg:top-4">
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                loading={saving}
-                disabled={!isValid}
-                className="w-full"
-              >
-                <Save className="h-4 w-4" />
-                {existingQuotation ? "Save Changes" : "Save Quotation"}
-              </Button>
+            <div className="bg-surface rounded-xl border border-brand-border shadow-card overflow-hidden lg:sticky lg:top-4">
+              {/* Summary */}
+              <div className="p-5 space-y-2.5">
+                <p className="text-xs font-semibold text-brand-muted uppercase tracking-wide mb-3">Summary</p>
+                <div className="flex justify-between text-sm">
+                  <span className="text-brand-muted">Subtotal</span>
+                  <span className="text-brand-dark">{formatCurrency(totals.subtotal)}</span>
+                </div>
+                {totals.discount_amount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-brand-muted">Discount</span>
+                    <span className="text-green-600">−{formatCurrency(totals.discount_amount)}</span>
+                  </div>
+                )}
+                {totals.discount_amount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-brand-muted">Taxable</span>
+                    <span className="text-brand-dark">{formatCurrency(totals.taxable_amount)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-sm">
+                  <span className="text-brand-muted">GST</span>
+                  <span className="text-brand-dark">{formatCurrency(totals.gst_amount)}</span>
+                </div>
+                <div className="border-t border-brand-border pt-2.5 flex justify-between items-center">
+                  <span className="text-sm font-bold text-brand-dark">Grand Total</span>
+                  <span className="text-lg font-bold text-brand-brown">{formatCurrency(totals.grand_total)}</span>
+                </div>
+              </div>
 
-              {existingQuotation && (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="lg"
-                  className="w-full"
-                  onClick={async () => {
-                    setDownloading(true);
-                    window.open(`/api/pdf/quotation/${existingQuotation.id}`, "_blank");
-                    setDownloading(false);
-                  }}
+              {/* Actions */}
+              <div className="px-5 pb-5 space-y-2.5">
+                <button
+                  type="submit"
+                  disabled={!isValid || saving}
+                  className="w-full h-10 rounded-lg text-sm font-semibold text-white flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: isValid && !saving ? "#1E1B4B" : "#6B7280" }}
+                  onMouseEnter={e => { if (isValid && !saving) (e.currentTarget as HTMLElement).style.background = "#15133A"; }}
+                  onMouseLeave={e => { if (isValid && !saving) (e.currentTarget as HTMLElement).style.background = "#1E1B4B"; }}
                 >
-                  <Download className="h-4 w-4" />
-                  Download PDF
-                </Button>
-              )}
+                  {saving ? (
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                  ) : (
+                    <Save className="h-4 w-4" />
+                  )}
+                  {existingQuotation ? "Save Changes" : "Save Quotation"}
+                </button>
 
-              <div className="pt-2 border-t border-brand-border text-xs text-brand-muted space-y-1">
-                <p>Items: {watchedItems?.filter((i) => i.description).length ?? 0}</p>
-                <p>Total: {formatCurrency(totals.grand_total)}</p>
+                {existingQuotation && (
+                  <button
+                    type="button"
+                    onClick={() => { window.open(`/api/pdf/quotation/${existingQuotation.id}`, "_blank"); }}
+                    className="w-full h-9 rounded-lg text-sm font-medium border border-brand-border bg-white text-brand-dark hover:bg-brand-beige flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <Download className="h-4 w-4" />
+                    Download PDF
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -351,11 +360,3 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
   );
 }
 
-function TotalRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between items-center">
-      <span className="text-xs text-brand-muted">{label}</span>
-      <span className="text-sm text-brand-dark">{value}</span>
-    </div>
-  );
-}
