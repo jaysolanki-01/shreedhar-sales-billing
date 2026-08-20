@@ -78,6 +78,7 @@ export interface Quotation {
   date: string;
   valid_until: string;
   status: QuotationStatus;
+  place_of_supply: string | null;
   subtotal: number;
   discount_amount: number;
   taxable_amount: number;

@@ -27,10 +27,23 @@ interface Props {
 
 const PREPARERS = ["Shreedhar Patel", "Pallav Patel"] as const;
 
+const INDIAN_STATES = [
+  "Andaman & Nicobar Islands (35)", "Andhra Pradesh (37)", "Arunachal Pradesh (12)",
+  "Assam (18)", "Bihar (10)", "Chandigarh (04)", "Chhattisgarh (22)",
+  "Dadra & Nagar Haveli / Daman & Diu (26)", "Delhi (07)", "Goa (30)", "Gujarat (24)",
+  "Haryana (06)", "Himachal Pradesh (02)", "Jammu & Kashmir (01)", "Jharkhand (20)",
+  "Karnataka (29)", "Kerala (32)", "Ladakh (38)", "Lakshadweep (31)", "Madhya Pradesh (23)",
+  "Maharashtra (27)", "Manipur (14)", "Meghalaya (17)", "Mizoram (15)", "Nagaland (13)",
+  "Odisha (21)", "Puducherry (34)", "Punjab (03)", "Rajasthan (08)", "Sikkim (11)",
+  "Tamil Nadu (33)", "Telangana (36)", "Tripura (16)", "Uttar Pradesh (09)",
+  "Uttarakhand (05)", "West Bengal (19)",
+] as const;
+
 interface FormValues {
   customer_id: string;
   date: string;
   valid_until: string;
+  place_of_supply: string;
   notes: string;
   terms: string;
   prepared_by: string;
@@ -60,6 +73,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
       customer_id: existingQuotation.customer_id,
       date: existingQuotation.date,
       valid_until: existingQuotation.valid_until,
+      place_of_supply: existingQuotation.place_of_supply ?? "Gujarat (24)",
       notes: existingQuotation.notes,
       terms: existingQuotation.terms,
       prepared_by: existingQuotation.prepared_by ?? "",
@@ -76,6 +90,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
       customer_id: preselectedCustomerId ?? "",
       date: today,
       valid_until: format(addDays(new Date(), validDays), "yyyy-MM-dd"),
+      place_of_supply: "Gujarat (24)",
       notes: "",
       terms: defaultSettings?.qtn_terms ?? "",
       prepared_by: "",
@@ -86,6 +101,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
   const watchedItems = watch("items");
   const watchedCustomerId = watch("customer_id");
   const watchedPreparedBy = watch("prepared_by");
+  const watchedPlaceOfSupply = watch("place_of_supply");
 
   const { items: computedItems, totals } = computeItemsAndTotals(watchedItems ?? []);
 
@@ -104,6 +120,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
             customer_id: formData.customer_id,
             date: formData.date,
             valid_until: formData.valid_until,
+            place_of_supply: formData.place_of_supply || null,
             notes: formData.notes,
             terms: formData.terms,
             prepared_by: formData.prepared_by || null,
@@ -142,6 +159,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
             quotation_number: numData,
             date: formData.date,
             valid_until: formData.valid_until,
+            place_of_supply: formData.place_of_supply || null,
             notes: formData.notes,
             terms: formData.terms,
             prepared_by: formData.prepared_by || null,
@@ -238,6 +256,18 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
               <div className="grid grid-cols-2 gap-4">
                 <Input label="Date" type="date" {...register("date")} />
                 <Input label="Valid Until" type="date" {...register("valid_until")} />
+              </div>
+              <div className="mt-4">
+                <Select
+                  value={watchedPlaceOfSupply}
+                  onValueChange={(v) => setValue("place_of_supply", v)}
+                  label="Place of Supply"
+                  placeholder="Select state..."
+                >
+                  {INDIAN_STATES.map((state) => (
+                    <SelectItem key={state} value={state}>{state}</SelectItem>
+                  ))}
+                </Select>
               </div>
               <div className="mt-4">
                 <p className="text-xs font-medium text-brand-muted mb-2">Prepared by</p>
