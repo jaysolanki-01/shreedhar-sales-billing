@@ -216,7 +216,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
         <div className="grid lg:grid-cols-[1fr_300px] gap-6">
 
           {/* Main form */}
-          <div className="space-y-6">
+          <div className="space-y-6 min-w-0">
             {/* Customer */}
             <div className="bg-surface rounded-xl border border-brand-border shadow-card p-5">
               <h3 className="text-sm font-semibold text-brand-dark mb-4">Customer</h3>
@@ -293,16 +293,17 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
             {/* Items */}
             <div className="bg-surface rounded-xl border border-brand-border shadow-card p-5">
               <h3 className="text-sm font-semibold text-brand-dark mb-4">Items</h3>
-              <ItemsEditor
-                control={control as any}
-                register={register as any}
-                watch={watch as any}
-                setValue={setValue as any}
-                defaultGst={defaultSettings?.default_gst_percent ?? 18}
-                errors={errors}
-              />
-
+              <div className="overflow-x-auto">
+                <ItemsEditor
+                  control={control as any}
+                  register={register as any}
+                  watch={watch as any}
+                  setValue={setValue as any}
+                  defaultGst={defaultSettings?.default_gst_percent ?? 18}
+                  errors={errors}
+                />
               </div>
+            </div>
 
             {/* Notes & Terms */}
             <div className="bg-surface rounded-xl border border-brand-border shadow-card p-5 space-y-4">

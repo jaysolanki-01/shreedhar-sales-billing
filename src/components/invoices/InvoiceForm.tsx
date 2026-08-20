@@ -168,7 +168,7 @@ export function InvoiceForm({ customers: initialCustomers, defaultSettings, user
     <div className="px-4 lg:px-8 py-6 max-w-5xl mx-auto w-full">
       <form onSubmit={handleSubmit(save)}>
         <div className="grid lg:grid-cols-[1fr_300px] gap-6">
-          <div className="space-y-6">
+          <div className="space-y-6 min-w-0">
             {/* Customer */}
             <div className="bg-surface rounded-xl border border-brand-border shadow-card p-5">
               <h3 className="text-sm font-semibold text-brand-dark mb-4">Customer</h3>
@@ -226,7 +226,9 @@ export function InvoiceForm({ customers: initialCustomers, defaultSettings, user
             {/* Items */}
             <div className="bg-surface rounded-xl border border-brand-border shadow-card p-5">
               <h3 className="text-sm font-semibold text-brand-dark mb-4">Items</h3>
-              <ItemsEditor control={control as any} register={register as any} watch={watch as any} setValue={setValue as any} defaultGst={defaultSettings?.default_gst_percent ?? 18} />
+              <div className="overflow-x-auto">
+                <ItemsEditor control={control as any} register={register as any} watch={watch as any} setValue={setValue as any} defaultGst={defaultSettings?.default_gst_percent ?? 18} />
+              </div>
               <div className="mt-6 flex justify-end">
                 <div className="w-full max-w-xs space-y-2">
                   <TotalRow label="Subtotal" value={formatCurrency(totals.subtotal)} />
