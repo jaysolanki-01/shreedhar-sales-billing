@@ -65,6 +65,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
       items: existingQuotation.quotation_items.map((item) => ({
         id: item.id,
         description: item.description,
+        hsn_code: item.hsn_code ?? "",
         quantity: String(item.quantity),
         rate: String(item.rate),
         discount_percent: String(item.discount_percent),
@@ -77,7 +78,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
       notes: "",
       terms: defaultSettings?.qtn_terms ?? "",
       prepared_by: "",
-      items: [{ description: "", quantity: "1", rate: "", discount_percent: "0", gst_percent: String(defaultSettings?.default_gst_percent ?? 18) }],
+      items: [{ description: "", hsn_code: "", quantity: "1", rate: "", discount_percent: "0", gst_percent: String(defaultSettings?.default_gst_percent ?? 18) }],
     },
   });
 
@@ -114,6 +115,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
         const itemsToInsert = computedItems.map((item, idx) => ({
           quotation_id: existingQuotation.id,
           description: item.description,
+          hsn_code: (item as any).hsn_code ?? "",
           quantity: item.quantity,
           rate: item.rate,
           discount_percent: item.discount_percent,
@@ -150,6 +152,7 @@ export function QuotationForm({ customers: initialCustomers, defaultSettings, us
         const itemsToInsert = computedItems.map((item, idx) => ({
           quotation_id: q.id,
           description: item.description,
+          hsn_code: (item as any).hsn_code ?? "",
           quantity: item.quantity,
           rate: item.rate,
           discount_percent: item.discount_percent,

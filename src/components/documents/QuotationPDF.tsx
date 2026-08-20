@@ -24,144 +24,187 @@ const C = {
   bg:      "#F8FAFC",
   white:   "#FFFFFF",
   green:   "#059669",
+  purple:  "#A5B4FC",
+};
+
+// Horizontal page padding
+const PX = 28;
+
+// Column widths — must sum to 595 - PX*2 = 539pt
+const COL = {
+  sr:      20,
+  desc:    130,
+  hsn:     40,
+  qty:     28,
+  rate:    60,
+  disc:    34,
+  taxable: 64,
+  cgst:    50,
+  sgst:    50,
+  amt:     63,
+  // total: 20+130+40+28+60+34+64+50+50+63 = 539 ✓
 };
 
 const s = StyleSheet.create({
   page: {
     fontFamily: "Roboto",
     backgroundColor: C.white,
-    paddingBottom: 48,
-    fontSize: 9,
+    paddingBottom: 54,
+    fontSize: 8,
     color: C.navy,
   },
+  stripe: { height: 5, backgroundColor: C.indigo },
 
-  // ── Top accent stripe ──
-  stripe: { height: 4, backgroundColor: C.indigo },
-
-  // ── Header ──
+  // ── Header ──────────────────────────────────────────────────────
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    paddingHorizontal: 36,
-    paddingTop: 24,
-    paddingBottom: 20,
+    paddingHorizontal: PX,
+    paddingTop: 18,
+    paddingBottom: 14,
     borderBottomWidth: 1,
     borderBottomColor: C.border,
   },
   logoBox: {
-    width: 44, height: 44, borderRadius: 8,
+    width: 42, height: 42, borderRadius: 8,
     backgroundColor: C.indigoL,
     alignItems: "center", justifyContent: "center",
-    marginBottom: 6,
-    overflow: "hidden",
+    marginBottom: 5, overflow: "hidden",
   },
-  logoImg: { width: 44, height: 44, objectFit: "contain" },
+  logoImg: { width: 42, height: 42, objectFit: "contain" },
   logoText: { color: C.indigo, fontSize: 16, fontFamily: "Roboto", fontWeight: 700 },
-  companyName: { color: C.navy, fontSize: 13, fontFamily: "Roboto", fontWeight: 700, marginBottom: 3 },
-  companyLine: { color: C.slate, fontSize: 8, marginBottom: 1.5, lineHeight: 1.4 },
+  companyName: { color: C.navy, fontSize: 12, fontFamily: "Roboto", fontWeight: 700, marginBottom: 3 },
+  companyLine: { color: C.slate, fontSize: 7.5, marginBottom: 1.5, lineHeight: 1.4 },
   headerRight: { alignItems: "flex-end" },
   docBadge: {
-    backgroundColor: C.indigoL, borderRadius: 4,
-    paddingHorizontal: 8, paddingVertical: 3, marginBottom: 8,
+    backgroundColor: C.indigo, borderRadius: 4,
+    paddingHorizontal: 10, paddingVertical: 4, marginBottom: 8,
   },
-  docBadgeText: { color: C.indigo, fontSize: 8, fontFamily: "Roboto", fontWeight: 700, letterSpacing: 1 },
-
-  // ── Body ──
-  body: { paddingHorizontal: 36, paddingTop: 22 },
-
-  // ── Meta grid (Quotation No / Date / Valid Until) ──
+  docBadgeText: { color: C.white, fontSize: 9, fontFamily: "Roboto", fontWeight: 700, letterSpacing: 2 },
   metaRow: { flexDirection: "row", marginBottom: 3, justifyContent: "flex-end" },
-  metaLabel: { color: C.muted, fontSize: 8, width: 68, textAlign: "right", marginRight: 6 },
-  metaValue: { color: C.navy, fontSize: 8.5, fontFamily: "Roboto", fontWeight: 700, textAlign: "right", minWidth: 90 },
-
-  // ── Bill To / From two-col ──
-  twoCol: { flexDirection: "row", marginBottom: 20, gap: 20 },
-  colBlock: { flex: 1 },
-  sectionLabel: {
-    color: C.indigo, fontSize: 7, fontFamily: "Roboto", fontWeight: 700,
-    textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6,
-    borderBottomWidth: 1, borderBottomColor: C.indigoL, paddingBottom: 4,
-  },
-  contactName: { color: C.navy, fontSize: 10, fontFamily: "Roboto", fontWeight: 700, marginBottom: 2 },
-  contactLine: { color: C.slate, fontSize: 8, marginBottom: 1.5, lineHeight: 1.4 },
-
-  // ── Status badge ──
+  metaLabel: { color: C.muted, fontSize: 7.5, width: 74, textAlign: "right", marginRight: 8 },
+  metaValue: { color: C.navy, fontSize: 8, fontFamily: "Roboto", fontWeight: 700, textAlign: "right", minWidth: 88 },
   statusBadge: {
-    backgroundColor: C.bg, borderRadius: 3,
-    paddingHorizontal: 6, paddingVertical: 2,
-    alignSelf: "flex-start", marginTop: 4,
+    borderRadius: 3, paddingHorizontal: 7, paddingVertical: 2, alignSelf: "flex-start", marginTop: 6,
   },
-  statusText: { color: C.slate, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700 },
+  statusText: { fontSize: 6.5, fontFamily: "Roboto", fontWeight: 700 },
 
-  // ── Table ──
-  tableWrap: { borderRadius: 6, overflow: "hidden", borderWidth: 1, borderColor: C.border, marginBottom: 16 },
-  tableHead: { backgroundColor: C.navy, flexDirection: "row", paddingVertical: 9 },
-  tableHeadCell: { color: C.white, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.6 },
-  tableRow: { flexDirection: "row", paddingVertical: 9, borderBottomWidth: 1, borderBottomColor: C.border },
+  // ── Body ─────────────────────────────────────────────────────────
+  body: { paddingHorizontal: PX, paddingTop: 16 },
+
+  // ── Bill To / Ship To ─────────────────────────────────────────
+  twoCol: { flexDirection: "row", marginBottom: 16, gap: 12 },
+  colBlock: {
+    flex: 1, backgroundColor: C.bg, borderRadius: 5,
+    padding: 10, borderWidth: 1, borderColor: C.border,
+  },
+  sectionLabel: {
+    color: C.indigo, fontSize: 6.5, fontFamily: "Roboto", fontWeight: 700,
+    textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 5,
+    borderBottomWidth: 1, borderBottomColor: C.indigoL, paddingBottom: 3,
+  },
+  contactName: { color: C.navy, fontSize: 9, fontFamily: "Roboto", fontWeight: 700, marginBottom: 2 },
+  contactLine: { color: C.slate, fontSize: 7.5, marginBottom: 1.5, lineHeight: 1.4 },
+
+  // ── Table ────────────────────────────────────────────────────────
+  tableWrap: {
+    borderRadius: 5, overflow: "hidden",
+    borderWidth: 1, borderColor: C.border, marginBottom: 12,
+  },
+  tableHead: { backgroundColor: C.navy, flexDirection: "row", paddingVertical: 7 },
+  tableHeadCell: {
+    color: C.white, fontSize: 6.5, fontFamily: "Roboto", fontWeight: 700,
+    textTransform: "uppercase", letterSpacing: 0.4,
+  },
+  tableRow: {
+    flexDirection: "row", paddingVertical: 7,
+    borderBottomWidth: 1, borderBottomColor: C.border,
+  },
   tableRowAlt: { backgroundColor: C.bg },
-  tableCell: { fontSize: 8.5, color: C.navy },
-  tableCellMuted: { fontSize: 8.5, color: C.slate },
+  tableCell: { fontSize: 7.5, color: C.navy },
+  tableCellMuted: { fontSize: 7.5, color: C.slate },
 
-  colDesc: { flex: 3, paddingLeft: 12 },
-  colQty:  { width: 42, textAlign: "right" },
-  colRate: { width: 66, textAlign: "right" },
-  colDisc: { width: 44, textAlign: "right" },
-  colGst:  { width: 44, textAlign: "right" },
-  colAmt:  { width: 72, paddingRight: 12, textAlign: "right" },
+  colSr:      { width: COL.sr,      paddingLeft: 8,  textAlign: "center" },
+  colDesc:    { width: COL.desc,    paddingLeft: 6,  paddingRight: 4 },
+  colHsn:     { width: COL.hsn,    textAlign: "center" },
+  colQty:     { width: COL.qty,    textAlign: "right" },
+  colRate:    { width: COL.rate,   textAlign: "right" },
+  colDisc:    { width: COL.disc,   textAlign: "right" },
+  colTaxable: { width: COL.taxable, textAlign: "right" },
+  colCgst:    { width: COL.cgst,   textAlign: "right" },
+  colSgst:    { width: COL.sgst,   textAlign: "right" },
+  colAmt:     { width: COL.amt,    textAlign: "right", paddingRight: 8 },
 
-  // ── Totals ──
-  totalsWrap: { alignItems: "flex-end", marginBottom: 16 },
-  totalsBox: { width: 230 },
-  totalRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 4 },
-  totalLabel: { color: C.slate, fontSize: 8.5 },
-  totalValue: { color: C.navy, fontSize: 8.5 },
-  divider: { height: 1, backgroundColor: C.border, marginVertical: 6 },
+  // ── Totals ───────────────────────────────────────────────────────
+  totalsWrap: { alignItems: "flex-end", marginBottom: 12 },
+  totalsBox: { width: 240 },
   grandRow: {
     flexDirection: "row", justifyContent: "space-between", alignItems: "center",
     backgroundColor: C.navy, borderRadius: 5,
-    paddingHorizontal: 12, paddingVertical: 9, marginTop: 6,
+    paddingHorizontal: 12, paddingVertical: 9, marginBottom: 10,
   },
   grandLabel: { color: C.white, fontSize: 9, fontFamily: "Roboto", fontWeight: 700, letterSpacing: 0.5 },
-  grandValue: { color: "#A5B4FC", fontSize: 13, fontFamily: "Roboto", fontWeight: 700 },
+  grandValue: { color: C.purple, fontSize: 13, fontFamily: "Roboto", fontWeight: 700 },
+  totalRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 4 },
+  totalLabel: { color: C.slate, fontSize: 8 },
+  totalValue: { color: C.navy, fontSize: 8 },
+  divider: { height: 1, backgroundColor: C.border, marginVertical: 6 },
+  totalFinalRow: { flexDirection: "row", justifyContent: "space-between", paddingTop: 2 },
+  totalFinalLabel: { color: C.navy, fontSize: 8.5, fontFamily: "Roboto", fontWeight: 700 },
+  totalFinalValue: { color: C.navy, fontSize: 8.5, fontFamily: "Roboto", fontWeight: 700 },
 
-  // ── Amount in words ──
+  // ── Amount in words ──────────────────────────────────────────────
   wordsBox: {
-    backgroundColor: C.bg, borderRadius: 5, borderWidth: 1, borderColor: C.border,
-    paddingHorizontal: 12, paddingVertical: 8, marginBottom: 16,
+    backgroundColor: C.bg, borderRadius: 5,
+    borderWidth: 1, borderColor: C.border,
+    paddingHorizontal: 12, paddingVertical: 7, marginBottom: 12,
   },
-  wordsLabel: { color: C.muted, fontSize: 7, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 3 },
-  wordsValue: { color: C.navy, fontSize: 8.5, fontFamily: "Roboto", fontWeight: 700 },
+  wordsLabel: { color: C.muted, fontSize: 6.5, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 2 },
+  wordsValue: { color: C.navy, fontSize: 8, fontFamily: "Roboto", fontWeight: 700 },
 
-  // ── Notes / Terms ──
-  noteLabel: { color: C.indigo, fontSize: 7, fontFamily: "Roboto", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 },
-  noteText: { color: C.slate, fontSize: 8.5, lineHeight: 1.5 },
-  noteBlock: { marginBottom: 12 },
+  // ── Notes / Terms ────────────────────────────────────────────────
+  noteLabel: {
+    color: C.indigo, fontSize: 7, fontFamily: "Roboto", fontWeight: 700,
+    textTransform: "uppercase", letterSpacing: 1, marginBottom: 4,
+  },
+  noteText: { color: C.slate, fontSize: 7.5, lineHeight: 1.5 },
+  noteBlock: { marginBottom: 10 },
 
-  // ── Bank ──
+  // ── Bank Details ─────────────────────────────────────────────────
   bankGrid: { flexDirection: "row", flexWrap: "wrap" },
   bankItem: { width: "50%", marginBottom: 5 },
-  bankLabel: { color: C.muted, fontSize: 7 },
-  bankValue: { color: C.navy, fontSize: 8.5, fontFamily: "Roboto", fontWeight: 700 },
+  bankLabel: { color: C.muted, fontSize: 6.5 },
+  bankValue: { color: C.navy, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700 },
 
-  // ── Footer ──
+  // ── Fixed Footer Bar ─────────────────────────────────────────────
   footer: {
-    borderTopWidth: 1, borderTopColor: C.border,
-    marginTop: 20, paddingTop: 12, paddingHorizontal: 36,
-    flexDirection: "row", justifyContent: "space-between", alignItems: "center",
+    position: "absolute",
+    bottom: 0, left: 0, right: 0,
+    height: 46,
+    backgroundColor: C.navy,
+    paddingHorizontal: PX,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  footerLeft: { color: C.muted, fontSize: 7.5 },
-  footerRight: { color: C.indigo, fontSize: 7.5, fontFamily: "Roboto", fontWeight: 700 },
+  footerText: { color: C.purple, fontSize: 6.5, marginBottom: 2 },
+  footerRight: { alignItems: "flex-end" },
+  footerEmail: { color: C.white, fontSize: 6.5, marginBottom: 2 },
+  footerCompany: { color: C.purple, fontSize: 6.5, fontFamily: "Roboto", fontWeight: 700 },
 
-  pageNum: { position: "absolute", bottom: 16, right: 36, color: C.muted, fontSize: 7.5 },
+  pageNum: { position: "absolute", bottom: 52, right: PX, color: C.muted, fontSize: 7 },
 });
 
 function fmt(n: number) {
-  return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(n);
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency", currency: "INR",
+    minimumFractionDigits: 2, maximumFractionDigits: 2,
+  }).format(n);
 }
 
 function fmtDate(d: string) {
-  return new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" });
+  return new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
 }
 
 const STATUS_COLOR: Record<string, string> = {
@@ -181,6 +224,9 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
   const companyName = company?.company_name ?? "Shreedhar Sales";
   const statusColor = STATUS_COLOR[quotation.status] ?? C.slate;
 
+  const totalCgst = Number(quotation.gst_amount) / 2;
+  const totalSgst = Number(quotation.gst_amount) / 2;
+
   return (
     <Document title={quotation.quotation_number} author={companyName}>
       <Page size="A4" style={s.page} wrap>
@@ -188,7 +234,7 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
         {/* Top indigo stripe */}
         <View style={s.stripe} />
 
-        {/* Header */}
+        {/* ── Header ── */}
         <View style={s.header}>
           {/* Left — Logo + Company */}
           <View>
@@ -201,9 +247,9 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
             </View>
             <Text style={s.companyName}>{companyName}</Text>
             {company?.address && <Text style={s.companyLine}>{company.address}</Text>}
-            {company?.phone && <Text style={s.companyLine}>{company.phone}</Text>}
-            {company?.email && <Text style={s.companyLine}>{company.email}</Text>}
-            {company?.gstin && <Text style={s.companyLine}>GSTIN: {company.gstin}</Text>}
+            {company?.phone  && <Text style={s.companyLine}>{company.phone}</Text>}
+            {company?.email  && <Text style={s.companyLine}>{company.email}</Text>}
+            {company?.gstin  && <Text style={s.companyLine}>GSTIN: {company.gstin}</Text>}
           </View>
 
           {/* Right — Doc type + meta */}
@@ -212,7 +258,7 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
               <Text style={s.docBadgeText}>QUOTATION</Text>
             </View>
             <View style={s.metaRow}>
-              <Text style={s.metaLabel}>Quotation No</Text>
+              <Text style={s.metaLabel}>Quotation No.</Text>
               <Text style={s.metaValue}>{quotation.quotation_number}</Text>
             </View>
             <View style={s.metaRow}>
@@ -223,93 +269,125 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
               <Text style={s.metaLabel}>Valid Until</Text>
               <Text style={s.metaValue}>{fmtDate(quotation.valid_until)}</Text>
             </View>
-            {/* Status */}
-            <View style={[s.statusBadge, { backgroundColor: statusColor + "18", marginTop: 8 }]}>
+            <View style={[s.statusBadge, { backgroundColor: statusColor + "18" }]}>
               <Text style={[s.statusText, { color: statusColor }]}>{quotation.status.toUpperCase()}</Text>
             </View>
           </View>
         </View>
 
-        {/* Body */}
+        {/* ── Body ── */}
         <View style={s.body}>
 
-          {/* Bill To / From */}
+          {/* Bill To & Ship To */}
           <View style={s.twoCol}>
             <View style={s.colBlock}>
               <Text style={s.sectionLabel}>Bill To</Text>
               <Text style={s.contactName}>{customer?.name ?? "—"}</Text>
               {customer?.company_name && <Text style={s.contactLine}>{customer.company_name}</Text>}
-              {customer?.address && <Text style={s.contactLine}>{customer.address}</Text>}
-              {customer?.phone && <Text style={s.contactLine}>{customer.phone}</Text>}
-              {customer?.email && <Text style={s.contactLine}>{customer.email}</Text>}
-              {customer?.gstin && <Text style={s.contactLine}>GSTIN: {customer.gstin}</Text>}
+              {customer?.address      && <Text style={s.contactLine}>{customer.address}</Text>}
+              {customer?.phone        && <Text style={s.contactLine}>{customer.phone}</Text>}
+              {customer?.email        && <Text style={s.contactLine}>{customer.email}</Text>}
+              {customer?.gstin        && <Text style={s.contactLine}>GSTIN: {customer.gstin}</Text>}
             </View>
             <View style={s.colBlock}>
-              <Text style={s.sectionLabel}>From</Text>
-              <Text style={s.contactName}>{companyName}</Text>
-              {company?.address && <Text style={s.contactLine}>{company.address}</Text>}
-              {company?.phone && <Text style={s.contactLine}>{company.phone}</Text>}
-              {company?.gstin && <Text style={s.contactLine}>GSTIN: {company.gstin}</Text>}
+              <Text style={s.sectionLabel}>Ship To</Text>
+              <Text style={s.contactName}>{customer?.name ?? "—"}</Text>
+              {customer?.company_name && <Text style={s.contactLine}>{customer.company_name}</Text>}
+              {customer?.address      && <Text style={s.contactLine}>{customer.address}</Text>}
+              {customer?.phone        && <Text style={s.contactLine}>{customer.phone}</Text>}
+              {customer?.email        && <Text style={s.contactLine}>{customer.email}</Text>}
+              {customer?.gstin        && <Text style={s.contactLine}>GSTIN: {customer.gstin}</Text>}
             </View>
           </View>
 
-          {/* Items Table */}
+          {/* ── Items Table ── */}
           <View style={s.tableWrap}>
+            {/* Header row */}
             <View style={s.tableHead}>
+              <Text style={[s.tableHeadCell, s.colSr]}>Sr.</Text>
               <Text style={[s.tableHeadCell, s.colDesc]}>Description</Text>
+              <Text style={[s.tableHeadCell, s.colHsn]}>HSN</Text>
               <Text style={[s.tableHeadCell, s.colQty]}>Qty</Text>
               <Text style={[s.tableHeadCell, s.colRate]}>Rate</Text>
               <Text style={[s.tableHeadCell, s.colDisc]}>Disc%</Text>
-              <Text style={[s.tableHeadCell, s.colGst]}>GST%</Text>
+              <Text style={[s.tableHeadCell, s.colTaxable]}>Taxable</Text>
+              <Text style={[s.tableHeadCell, s.colCgst]}>CGST</Text>
+              <Text style={[s.tableHeadCell, s.colSgst]}>SGST</Text>
               <Text style={[s.tableHeadCell, s.colAmt]}>Amount</Text>
             </View>
-            {items.map((item: any, idx: number) => (
-              <View key={item.id ?? idx} style={[s.tableRow, idx % 2 === 1 ? s.tableRowAlt : {}, idx === items.length - 1 ? { borderBottomWidth: 0 } : {}]} wrap={false}>
-                <View style={[s.colDesc, { flexDirection: "column" }]}>
-                  <Text style={s.tableCell}>{item.description}</Text>
-                  {item.notes ? <Text style={[s.tableCellMuted, { fontSize: 7.5, marginTop: 1 }]}>{item.notes}</Text> : null}
+
+            {/* Data rows */}
+            {items.map((item: any, idx: number) => {
+              const cgst = Number(item.gst_amount ?? 0) / 2;
+              const sgst = Number(item.gst_amount ?? 0) / 2;
+              const taxable = Number(item.taxable_amount ?? 0);
+              const isLast = idx === items.length - 1;
+              return (
+                <View
+                  key={item.id ?? idx}
+                  style={[
+                    s.tableRow,
+                    idx % 2 === 1 ? s.tableRowAlt : {},
+                    isLast ? { borderBottomWidth: 0 } : {},
+                  ]}
+                  wrap={false}
+                >
+                  <Text style={[s.tableCellMuted, s.colSr]}>{idx + 1}</Text>
+                  <Text style={[s.tableCell, s.colDesc]}>{item.description}</Text>
+                  <Text style={[s.tableCellMuted, s.colHsn]}>{item.hsn_code ?? ""}</Text>
+                  <Text style={[s.tableCellMuted, s.colQty]}>{item.quantity}</Text>
+                  <Text style={[s.tableCellMuted, s.colRate]}>{fmt(Number(item.rate))}</Text>
+                  <Text style={[s.tableCellMuted, s.colDisc]}>{item.discount_percent ?? 0}%</Text>
+                  <Text style={[s.tableCellMuted, s.colTaxable]}>{fmt(taxable)}</Text>
+                  <Text style={[s.tableCellMuted, s.colCgst]}>{fmt(cgst)}</Text>
+                  <Text style={[s.tableCellMuted, s.colSgst]}>{fmt(sgst)}</Text>
+                  <Text style={[s.tableCell, s.colAmt, { fontFamily: "Roboto", fontWeight: 700 }]}>
+                    {fmt(Number(item.amount))}
+                  </Text>
                 </View>
-                <Text style={[s.tableCellMuted, s.colQty]}>{item.quantity}</Text>
-                <Text style={[s.tableCellMuted, s.colRate]}>{fmt(Number(item.rate))}</Text>
-                <Text style={[s.tableCellMuted, s.colDisc]}>{item.discount_percent ?? 0}%</Text>
-                <Text style={[s.tableCellMuted, s.colGst]}>{item.gst_percent ?? 0}%</Text>
-                <Text style={[s.tableCell, s.colAmt, { fontFamily: "Roboto", fontWeight: 700 }]}>{fmt(Number(item.amount))}</Text>
-              </View>
-            ))}
+              );
+            })}
           </View>
 
-          {/* Totals */}
+          {/* ── Totals ── */}
           <View style={s.totalsWrap}>
             <View style={s.totalsBox}>
+              {/* Grand Total — prominent first */}
+              <View style={s.grandRow}>
+                <Text style={s.grandLabel}>GRAND TOTAL</Text>
+                <Text style={s.grandValue}>{fmt(Number(quotation.grand_total))}</Text>
+              </View>
+
+              {/* Breakdown */}
               <View style={s.totalRow}>
-                <Text style={s.totalLabel}>Subtotal</Text>
-                <Text style={s.totalValue}>{fmt(Number(quotation.subtotal))}</Text>
+                <Text style={s.totalLabel}>Taxable Value</Text>
+                <Text style={s.totalValue}>{fmt(Number(quotation.taxable_amount))}</Text>
+              </View>
+              <View style={s.totalRow}>
+                <Text style={s.totalLabel}>CGST</Text>
+                <Text style={s.totalValue}>{fmt(totalCgst)}</Text>
+              </View>
+              <View style={s.totalRow}>
+                <Text style={s.totalLabel}>SGST</Text>
+                <Text style={s.totalValue}>{fmt(totalSgst)}</Text>
               </View>
               {Number(quotation.discount_amount) > 0 && (
                 <View style={s.totalRow}>
                   <Text style={s.totalLabel}>Discount</Text>
-                  <Text style={[s.totalValue, { color: C.green }]}>− {fmt(Number(quotation.discount_amount))}</Text>
+                  <Text style={[s.totalValue, { color: C.green }]}>
+                    − {fmt(Number(quotation.discount_amount))}
+                  </Text>
                 </View>
               )}
-              {Number(quotation.discount_amount) > 0 && (
-                <View style={s.totalRow}>
-                  <Text style={s.totalLabel}>Taxable Amount</Text>
-                  <Text style={s.totalValue}>{fmt(Number(quotation.taxable_amount))}</Text>
-                </View>
-              )}
-              <View style={s.totalRow}>
-                <Text style={s.totalLabel}>GST</Text>
-                <Text style={s.totalValue}>{fmt(Number(quotation.gst_amount))}</Text>
-              </View>
               <View style={s.divider} />
-              <View style={s.grandRow}>
-                <Text style={s.grandLabel}>TOTAL AMOUNT</Text>
-                <Text style={s.grandValue}>{fmt(Number(quotation.grand_total))}</Text>
+              <View style={s.totalFinalRow}>
+                <Text style={s.totalFinalLabel}>Total Amount</Text>
+                <Text style={s.totalFinalValue}>{fmt(Number(quotation.grand_total))}</Text>
               </View>
             </View>
           </View>
 
-          {/* Amount in words */}
+          {/* Amount in Words */}
           <View style={s.wordsBox}>
             <Text style={s.wordsLabel}>Amount in Words</Text>
             <Text style={s.wordsValue}>{amountToWords(Number(quotation.grand_total))}</Text>
@@ -335,36 +413,61 @@ export function QuotationPDF({ quotation, company, docSettings, logoBase64 }: Pr
           {docSettings?.bank_account_number ? (
             <View style={s.noteBlock}>
               <View style={s.divider} />
-              <Text style={[s.noteLabel, { marginTop: 12 }]}>Bank Details</Text>
+              <Text style={[s.noteLabel, { marginTop: 10, marginBottom: 6 }]}>Bank Details</Text>
               <View style={s.bankGrid}>
                 {docSettings.bank_account_name && (
-                  <View style={s.bankItem}><Text style={s.bankLabel}>Account Name</Text><Text style={s.bankValue}>{docSettings.bank_account_name}</Text></View>
+                  <View style={s.bankItem}>
+                    <Text style={s.bankLabel}>Account Name</Text>
+                    <Text style={s.bankValue}>{docSettings.bank_account_name}</Text>
+                  </View>
                 )}
                 {docSettings.bank_name && (
-                  <View style={s.bankItem}><Text style={s.bankLabel}>Bank</Text><Text style={s.bankValue}>{docSettings.bank_name}</Text></View>
+                  <View style={s.bankItem}>
+                    <Text style={s.bankLabel}>Bank</Text>
+                    <Text style={s.bankValue}>{docSettings.bank_name}</Text>
+                  </View>
                 )}
                 {docSettings.bank_account_number && (
-                  <View style={s.bankItem}><Text style={s.bankLabel}>Account Number</Text><Text style={s.bankValue}>{docSettings.bank_account_number}</Text></View>
+                  <View style={s.bankItem}>
+                    <Text style={s.bankLabel}>Account Number</Text>
+                    <Text style={s.bankValue}>{docSettings.bank_account_number}</Text>
+                  </View>
                 )}
                 {docSettings.bank_ifsc && (
-                  <View style={s.bankItem}><Text style={s.bankLabel}>IFSC</Text><Text style={s.bankValue}>{docSettings.bank_ifsc}</Text></View>
+                  <View style={s.bankItem}>
+                    <Text style={s.bankLabel}>IFSC</Text>
+                    <Text style={s.bankValue}>{docSettings.bank_ifsc}</Text>
+                  </View>
                 )}
                 {docSettings.bank_upi && (
-                  <View style={s.bankItem}><Text style={s.bankLabel}>UPI</Text><Text style={s.bankValue}>{docSettings.bank_upi}</Text></View>
+                  <View style={s.bankItem}>
+                    <Text style={s.bankLabel}>UPI</Text>
+                    <Text style={s.bankValue}>{docSettings.bank_upi}</Text>
+                  </View>
                 )}
               </View>
             </View>
           ) : null}
-
-          {/* Footer */}
-          <View style={s.footer}>
-            <Text style={s.footerLeft}>Thank you for your business.</Text>
-            <Text style={s.footerRight}>{companyName.toUpperCase()}</Text>
-          </View>
         </View>
 
-        {/* Page number */}
-        <Text style={s.pageNum} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} fixed />
+        {/* Page Number */}
+        <Text
+          style={s.pageNum}
+          render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
+          fixed
+        />
+
+        {/* Fixed Footer — contact info */}
+        <View style={s.footer} fixed>
+          <View>
+            <Text style={s.footerText}>+91 79848 41640  |  +91 79847 17501</Text>
+            <Text style={s.footerText}>802 B Wing, Gopal Palace, Opp. Ocean Park, Nehru Nagar, Ahmedabad</Text>
+          </View>
+          <View style={s.footerRight}>
+            <Text style={s.footerEmail}>shreedharsales056@gmail.com</Text>
+            <Text style={s.footerCompany}>{companyName.toUpperCase()}</Text>
+          </View>
+        </View>
 
       </Page>
     </Document>

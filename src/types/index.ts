@@ -56,6 +56,7 @@ export interface QuotationItem {
   id: string;
   quotation_id: string;
   description: string;
+  hsn_code?: string;
   quantity: number;
   rate: number;
   discount_percent: number;
@@ -94,6 +95,7 @@ export interface InvoiceItem {
   id: string;
   invoice_id: string;
   description: string;
+  hsn_code?: string;
   quantity: number;
   rate: number;
   discount_percent: number;
@@ -148,6 +150,7 @@ export interface Payment {
 export interface DocumentItemForm {
   id?: string;
   description: string;
+  hsn_code?: string;
   quantity: string;
   rate: string;
   discount_percent: string;

@@ -26,6 +26,7 @@ export function ItemsEditor({ control, register, watch, setValue, defaultGst, er
   function addItem() {
     append({
       description: "",
+      hsn_code: "",
       quantity: "1",
       rate: "",
       discount_percent: "0",
@@ -36,8 +37,9 @@ export function ItemsEditor({ control, register, watch, setValue, defaultGst, er
   return (
     <div>
       {/* Table Header */}
-      <div className="hidden sm:grid sm:grid-cols-[3fr_80px_100px_80px_80px_100px_40px] gap-2 px-3 py-2 bg-[#1A1740] rounded-t-lg text-xs font-semibold text-amber-300 uppercase tracking-wide">
+      <div className="hidden sm:grid sm:grid-cols-[3fr_80px_80px_100px_80px_80px_100px_40px] gap-2 px-3 py-2 bg-[#1A1740] rounded-t-lg text-xs font-semibold text-amber-300 uppercase tracking-wide">
         <span>Description</span>
+        <span className="text-right">HSN</span>
         <span className="text-right">Qty</span>
         <span className="text-right">Rate (₹)</span>
         <span className="text-right">Disc %</span>
@@ -58,7 +60,7 @@ export function ItemsEditor({ control, register, watch, setValue, defaultGst, er
           });
 
           return (
-            <div key={field.id} className="grid grid-cols-2 sm:grid-cols-[3fr_80px_100px_80px_80px_100px_40px] gap-2 p-3 items-start sm:items-center bg-surface hover:bg-brand-beige/50 transition-colors">
+            <div key={field.id} className="grid grid-cols-2 sm:grid-cols-[3fr_80px_80px_100px_80px_80px_100px_40px] gap-2 p-3 items-start sm:items-center bg-surface hover:bg-brand-beige/50 transition-colors">
               {/* Description — full width on mobile */}
               <div className="col-span-2 sm:col-span-1">
                 <label className="sm:hidden text-xs font-semibold text-brand-muted uppercase mb-1 block">Description</label>
@@ -66,6 +68,16 @@ export function ItemsEditor({ control, register, watch, setValue, defaultGst, er
                   {...register(`items.${index}.description`)}
                   placeholder="Item description"
                   className="w-full h-8 rounded border border-brand-border bg-surface px-2 text-sm text-brand-dark placeholder:text-brand-placeholder focus:outline-none focus:border-brand-brown"
+                />
+              </div>
+
+              {/* HSN — col 2, row 1 on mobile */}
+              <div>
+                <label className="sm:hidden text-xs font-semibold text-brand-muted uppercase mb-1 block">HSN</label>
+                <input
+                  {...register(`items.${index}.hsn_code`)}
+                  placeholder="HSN"
+                  className="w-full h-8 rounded border border-brand-border bg-surface px-2 text-sm text-right text-brand-dark focus:outline-none focus:border-brand-brown"
                 />
               </div>
 
